@@ -1,0 +1,28 @@
+{
+  "name": "redmine-notifier2",
+  "version": "2.0.0",
+  "description": "Redmine Notifier 2 LTS",
+  "author": "Community",
+  "main": "src/main/main.js",
+  "license": "MIT",
+  "scripts": {
+    "start": "electron .",
+    "dev": "electron .",
+    "dist": "electron-builder"
+  },
+  "build": {
+    "appId": "community.redminenotifier",
+    "productName": "Redmine Notifier",
+    "directories": {
+      "output": "dist"
+    },
+    "files": [
+      "src/**/*",
+      "node_modules/**/*",
+      "package.json"
+    ],
+    "win": {
+      "target": "nsis"
+    }
+  }
+}
