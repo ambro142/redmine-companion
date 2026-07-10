@@ -1,42 +1,51 @@
 <!DOCTYPE html>
 <html lang="ru">
-
 <head>
-
-<meta charset="UTF-8">
-
-<title>Redmine Notifier</title>
-
-<link rel="stylesheet" href="styles.css">
-
+    <meta charset="UTF-8">
+    <title>Redmine Notifier 2</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
-
 <body>
 
-<div id="app">
+<div class="container">
 
-<h1>
+    <h1>Redmine Notifier 2</h1>
 
-Redmine Notifier 2
+    <div class="card">
 
-</h1>
+        <label>Адрес Redmine</label>
 
-<p>
+        <input
+            id="serverUrl"
+            type="text"
+            placeholder="https://redmine.company.ru">
 
-Alpha 1
+        <label>API Key</label>
 
-</p>
+        <input
+            id="apiKey"
+            type="password"
+            placeholder="Ваш API ключ">
 
-<button id="btn">
+        <div class="buttons">
 
-Проверить
+            <button id="saveBtn">
+                Сохранить
+            </button>
 
-</button>
+            <button id="testBtn">
+                Проверить соединение
+            </button>
+
+        </div>
+
+        <p id="status"></p>
+
+    </div>
 
 </div>
 
 <script src="app.js"></script>
 
 </body>
-
 </html>

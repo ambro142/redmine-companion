@@ -1,35 +1,97 @@
 body{
 
-margin:0;
+    margin:0;
 
-background:#202124;
+    background:#202124;
 
-color:white;
+    font-family:Segoe UI;
 
-font-family:Segoe UI;
-
-display:flex;
-
-justify-content:center;
-
-align-items:center;
-
-height:100vh;
+    color:white;
 
 }
 
-#app{
+.container{
 
-text-align:center;
+    width:700px;
+
+    margin:60px auto;
+
+}
+
+.card{
+
+    background:#2b2d31;
+
+    border-radius:8px;
+
+    padding:20px;
+
+}
+
+label{
+
+    display:block;
+
+    margin-top:15px;
+
+}
+
+input{
+
+    width:100%;
+
+    margin-top:5px;
+
+    padding:10px;
+
+    border:none;
+
+    border-radius:5px;
+
+    box-sizing:border-box;
+
+}
+
+.buttons{
+
+    margin-top:25px;
 
 }
 
 button{
 
-padding:10px 25px;
+    margin-right:10px;
 
-font-size:16px;
+    padding:10px 25px;
 
-cursor:pointer;
+    cursor:pointer;
+
+}
+
+#status{
+
+    margin-top:20px;
+
+    min-height:22px;
+
+    font-weight:bold;
+
+}
+
+.success{
+
+    color:#4CAF50;
+
+}
+
+.error{
+
+    color:#ff5b5b;
+
+}
+
+.info{
+
+    color:#ffd54f;
 
 }
