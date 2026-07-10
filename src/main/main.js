@@ -1,30 +1,15 @@
-const { app, BrowserWindow } = require("electron");
-const path = require("path");
+const { app } = require("electron");
+const { createWindow } = require("./window");
 
-let mainWindow;
+app.whenReady().then(() => {
 
-function createWindow() {
+    createWindow();
 
-    mainWindow = new BrowserWindow({
+});
 
-        width: 1000,
+app.on("window-all-closed", () => {
 
-        height: 700,
+    if (process.platform !== "darwin")
+        app.quit();
 
-        title: "Redmine Notifier 2",
-
-        webPreferences: {
-
-            nodeIntegration: true,
-
-            contextIsolation: false
-
-        }
-
-    });
-
-    mainWindow.loadFile(path.join(__dirname,"../renderer/index.html"));
-
-}
-
-app.whenReady().then(createWindow);
+});
