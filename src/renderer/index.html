@@ -5,46 +5,230 @@
     <title>Redmine Notifier 2</title>
     <link rel="stylesheet" href="styles.css">
 </head>
+
 <body>
 
 <div class="container">
 
     <h1>Redmine Notifier 2</h1>
 
-    <div class="card">
+    <div class="tabs">
+
+        <button class="tab active" data-page="overview">
+            📊 Обзор
+        </button>
+
+        <button class="tab" data-page="issues">
+            📋 Мои задачи
+        </button>
+
+        <button class="tab" data-page="journal">
+            📜 Журнал
+        </button>
+
+        <button class="tab" data-page="settings">
+            ⚙ Настройки
+        </button>
+
+    </div>
+
+    <!-- =================== ОБЗОР =================== -->
+
+    <div id="overviewPage" class="page">
+        
+        <div id="dashboard" class="dashboard">
+
+            <div class="dashboard-title">
+                📊 Обзор
+            </div>
+
+            <div class="dashboard-row">
+                <span>👤 Назначено мне</span>
+                <span id="assignedCount">0</span>
+            </div>
+
+            <div class="dashboard-row">
+                <span>✍ Создано мной</span>
+                <span id="authoredCount">0</span>
+            </div>
+
+            <div class="dashboard-row">
+                <span>👀 Наблюдаю</span>
+                <span id="watchedCount">0</span>
+            </div>
+
+            <div class="dashboard-row">
+                <span>📋 Всего уникальных</span>
+                <span id="allCount">0</span>
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- =================== МОИ ЗАДАЧИ =================== -->
+
+    <div id="issuesPage" class="page" hidden>
+        <div class="issues-toolbar">
+            <div class="issues-switch">
+                <button id="filterActive" class="switch-btn active">
+                    Активные
+                </button>
+
+                <button id="filterAll" class="switch-btn">
+                    Все
+                </button>
+            </div>
+        </div>
+        <div class="issues-section">
+
+            <div class="issues-header" data-target="assignedList">
+                 <span class="arrow">▼</span>👤 Назначены мне (<span id="assignedTotal">0</span>)
+            </div>
+
+            <div id="assignedList" class="issues-list"></div>
+
+        </div>
+
+        <div class="issues-section">
+
+            <div class="issues-header" data-target="authoredList">
+                 <span class="arrow">▼</span>✍ Созданы мной (<span id="authoredTotal">0</span>)
+            </div>
+
+            <div id="authoredList" class="issues-list" hidden></div>
+
+        </div>
+
+        <div class="issues-section">
+
+            <div class="issues-header" data-target="watchedList">
+                 <span class="arrow">▼</span>👀 Под наблюдением (<span id="watchedTotal">0</span>)
+            </div>
+
+            <div id="watchedList" class="issues-list" hidden></div>
+
+        </div>
+
+    </div>
+
+    <!-- =================== ЖУРНАЛ =================== -->
+
+    <div id="journalPage" class="page" hidden>
+
+        <div class="journal-header">
+            <h2>📋 Журнал </h2>
+            <button
+                id="clearJournalBtn"
+                class="icon-button"
+                title="Очистить журнал">
+                🗑️
+            </button>    
+        </div>
+        <div id="journalList"></div>
+
+    </div>
+
+    <!-- =================== НАСТРОЙКИ =================== -->
+
+    <div id="settingsPage" class="page" hidden>
 
         <label>Адрес Redmine</label>
 
         <input
-            id="serverUrl"
-            type="text"
-            placeholder="https://redmine.company.ru">
-
+                id="serverUrl"
+                type="text"
+                placeholder="https://redmine.company.ru">
+        
         <label>API Key</label>
 
         <input
-            id="apiKey"
-            type="password"
-            placeholder="Ваш API ключ">
+                id="apiKey"
+                type="password"
+                placeholder="Ваш API Key">
 
         <div class="buttons">
 
-            <button id="saveBtn">
+            <button id="saveBtn"class="primary-button">
                 Сохранить
             </button>
 
-            <button id="testBtn">
-                Проверить соединение
+            <button id="testBtn"class="primary-button">
+                Синхронизировать
             </button>
+        
+        </div>
+        <div class="settings-divider"></div>
+        <div class="settings-row">
+            <label for="pollInterval">
+                ⏱ Интервал синхронизации
+            </label>
 
+            <select id="pollInterval">
+
+                <option value="30">
+                    30 секунд
+                </option>
+
+                <option value="60">
+                    1 минута
+                </option>
+
+                <option value="120">
+                    2 минуты
+                </option>
+
+                <option value="300">
+                    5 минут
+                </option>
+
+                <option value="600">
+                    10 минут
+                </option>
+
+            </select>
         </div>
 
-        <p id="status"></p>
+        <label class="settings-checkbox">
+            <input type="checkbox"id="startWithWindows">
+            <span>Запускать вместе с Windows</span>
+        </label>
 
-    </div>
+        <label class="settings-checkbox">
+            <input type="checkbox"id="startMinimized">
+            <span>Запускать свернутым</span>
+        </label>
 
+        <div class="settings-divider"></div>
+        <div id="statusCard" class="status-card">
+
+            <div class="status-title">
+                Нет подключения
+            </div>
+
+            <div class="status-user">
+                —
+            </div>
+
+            <div class="status-latency">
+                —
+            </div>
+            <div class="status-sync">
+                Последняя синхронизация: —
+            </div>
+        </div>
+    </div>  
 </div>
 
+<script src="SyncService.js"></script>
+<script src="services/IssueRenderer.js"></script>
+<script src="services/JournalService.js"></script>
+<script src="services/CompareService.js"></script>
+<script src="services/CommentService.js"></script>
+<script src="services/HistoryService.js"></script>
+<script src="services/NotificationBuilder.js"></script>
+<script src="services/IssueFilterService.js"></script>
+<script src="Apps.js"></script>
 <script src="app.js"></script>
 
 </body>

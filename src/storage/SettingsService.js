@@ -10,7 +10,10 @@ class SettingsService {
                 language: 'ru',
                 pollInterval: 60,
                 minimizeToTray: true,
-                startWithWindows: false
+                startWithWindows: false,
+                showClosed: false,
+                startMinimized: false,
+                historyInitialized: false,
             }
         });
     }
@@ -27,5 +30,4 @@ class SettingsService {
         return this.store.store;
     }
 }
-
 module.exports = new SettingsService();

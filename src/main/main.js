@@ -1,10 +1,28 @@
 const { app } = require("electron");
 const { createWindow } = require("./window");
-const settings = require("../storage/SettingsService");
-const { ipcMain } = require("electron");
-const RedmineClient=require("../api/RedmineClient");
+const { registerSettingsIpc } = require("./ipc/settings");
+const { registerRedmineIpc } = require("./ipc/redmine");
+const Logger = require("../utils/Logger");
+const { registerIssuesIpc } = require("./ipc/issues");
+const { registerDashboardIpc } = require("./ipc/dashboard");
+const { registerBrowserIpc } = require("./ipc/browser");
+const {registerNotificationIpc} = require("./ipc/notifications");
+const {registerCommentsIpc} = require("./ipc/comments");
+const {registerHistoryIpc}=require("./ipc/history");
+const TrayManager = require("./tray/TrayManager");
+const { registerSystemIpc } = require("./ipc/SystemIpc");
 app.whenReady().then(() => {
-    console.log(settings.getAll());
+    
+    Logger.info("Application started");
+    registerSettingsIpc();
+    registerRedmineIpc();
+    registerIssuesIpc();
+    registerDashboardIpc();
+    registerBrowserIpc();
+    registerNotificationIpc();
+    registerCommentsIpc();
+    registerHistoryIpc();
+    registerSystemIpc();
     createWindow();
 
 });
@@ -16,34 +34,3 @@ app.on("window-all-closed", () => {
 
 });
 
-ipcMain.handle("settings:load", () => {
-
-    return settings.getAll();
-
-});
-
-ipcMain.handle("settings:save", (_, data) => {
-
-    for (const key in data){
-
-        settings.set(key,data[key]);
-
-    }
-
-    return true;
-
-});
-
-ipcMain.handle("redmine:test", async () => {
-
-    const client = new RedmineClient(
-
-        settings.get("serverUrl"),
-
-        settings.get("apiKey")
-
-    );
-
-    return await client.testConnection();
-
-});
