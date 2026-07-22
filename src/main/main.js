@@ -1,4 +1,6 @@
 const { app } = require("electron");
+const {Menu} = require("electron");
+app.setAppUserModelId("Redmine Notifier")
 const { createWindow } = require("./window");
 const { registerSettingsIpc } = require("./ipc/settings");
 const { registerRedmineIpc } = require("./ipc/redmine");
@@ -11,6 +13,7 @@ const {registerCommentsIpc} = require("./ipc/comments");
 const {registerHistoryIpc}=require("./ipc/history");
 const TrayManager = require("./tray/TrayManager");
 const { registerSystemIpc } = require("./ipc/SystemIpc");
+
 app.whenReady().then(() => {
     
     Logger.info("Application started");
@@ -24,7 +27,7 @@ app.whenReady().then(() => {
     registerHistoryIpc();
     registerSystemIpc();
     createWindow();
-
+    Menu.setApplicationMenu(null);
 });
 
 app.on("window-all-closed", () => {

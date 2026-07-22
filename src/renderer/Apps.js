@@ -33,6 +33,7 @@ class App {
         this.journalList = document.getElementById("journalList");
         this.journal = new JournalService(this.journalList);
         this.history = new HistoryService();
+        
         this.issueFilter = "open";
         this.filterButtons = document.querySelectorAll('input[name="issueFilter"]');
         this.issueFilter = "active";
@@ -42,6 +43,7 @@ class App {
         this.clearJournalBtn = document.getElementById("clearJournalBtn");
         this.startWithWindows = document.getElementById("startWithWindows");
         this.startMinimized = document.getElementById("startMinimized");
+        
         this.settings = {};
         this.registerEvents();
         this.startup();

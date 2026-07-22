@@ -1,14 +1,16 @@
 {
   "name": "redmine-notifier2",
   "productName": "Redmine Notifier",
-  "version": "2.0.0-alpha1",
-  "description": "Redmine Notifier 2 LTS",
+  "version": "1.0.0-beta1",
+  "description": "Desktop companion for Redmine",
   "main": "src/main/main.js",
   "author": "Community",
   "license": "MIT",
+  "homepage": "https://github.com/",
   "scripts": {
     "start": "electron .",
-    "dist": "electron-builder"
+    "dist": "electron-builder",
+    "portable": "electron-builder --win portable"
   },
   "dependencies": {
     "axios": "^1.11.0",
@@ -18,5 +20,35 @@
   "devDependencies": {
     "electron": "22.3.27",
     "electron-builder": "^24.13.3"
+  },
+  "build": {
+    "appId": "com.redmine.notifier",
+    "productName": "Redmine Notifier",
+    "artifactName": "${productName}-${version}.${ext}",
+    "directories": {
+      "output": "release"
+    },
+    "files": [
+      "src/**/*",
+      "package.json"
+    ],
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "icon": "build/icon.ico"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "Redmine Notifier"
+    }
   }
 }
