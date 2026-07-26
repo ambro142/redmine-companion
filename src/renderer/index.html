@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>Redmine Notifier 2</title>
+    <title>Redmine Companion</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 
@@ -10,27 +10,65 @@
 
 <div class="container">
 
-    <h1>Redmine Notifier 2</h1>
+    <header class="app-header">
 
-    <div class="tabs">
+        <div class="header-left">
 
-        <button class="tab active" data-page="overview">
-            📊 Обзор
+            <div class="app-logo">
+                <img src="../assets/icon.png" alt="Logo">
+            </div>
+
+         <div class="header-info">
+
+                <div class="app-title">
+                Redmine Companion
+                </div>
+            </div>
+
+        </div>
+
+        <div class="header-lang issues-switch">
+            <button id="langRu" class="switch-btn active" data-lang="ru">
+                RU
+            </button>
+            <button id="langEn" class="switch-btn" data-lang="en">
+                EN
+            </button>
+        </div>
+
+        <div class="header-status">
+
+            <div id="statusTitle" class="status-title">
+                -
+            </div>
+
+            <div id="statusSync" class="status-sync">
+                <span data-i18n="header.lastSync">Последняя синхронизация:</span> —
+            </div>
+
+        </div>
+
+    </header>
+
+    <nav class="tabs">
+
+        <button class="tab active" data-page="overview" data-i18n="tabs.overview">
+            Обзор
         </button>
 
-        <button class="tab" data-page="issues">
-            📋 Мои задачи
+        <button class="tab" data-page="issues" data-i18n="tabs.issues">
+            Мои задачи
         </button>
 
-        <button class="tab" data-page="journal">
-            📜 Журнал
+        <button class="tab" data-page="journal" data-i18n="tabs.journal">
+            Журнал
         </button>
 
-        <button class="tab" data-page="settings">
-            ⚙ Настройки
+        <button class="tab" data-page="settings" data-i18n="tabs.settings">
+            Настройки
         </button>
 
-    </div>
+    </nav>
 
     <!-- =================== ОБЗОР =================== -->
 
@@ -38,28 +76,72 @@
         
         <div id="dashboard" class="dashboard">
 
-            <div class="dashboard-title">
-                📊 Обзор
+            <div class="dashboard-card">
+
+                <div class="dashboard-icon">
+                    <img class="icon"src="../assets/icons/person.svg">
+                </div>
+
+                <div class="dashboard-name" data-i18n="dashboard.assigned">
+                    Назначено
+                </div>
+
+                <div id="assignedCount"
+                    class="dashboard-value">
+                    0
+                </div>
+
             </div>
 
-            <div class="dashboard-row">
-                <span>👤 Назначено мне</span>
-                <span id="assignedCount">0</span>
+            <div class="dashboard-card">
+
+                <div class="dashboard-icon">
+                    <img class="icon"src="../assets/icons/edit.svg">
+                </div>
+
+                <div class="dashboard-name" data-i18n="dashboard.authored">
+                    Создано
+                </div>
+
+                <div id="authoredCount"
+                    class="dashboard-value">
+                    0
+                </div>
+
             </div>
 
-            <div class="dashboard-row">
-                <span>✍ Создано мной</span>
-                <span id="authoredCount">0</span>
+            <div class="dashboard-card">
+
+                <div class="dashboard-icon">
+                    <img class="icon"src="../assets/icons/eye.svg">
+                </div>
+
+                <div class="dashboard-name" data-i18n="dashboard.watched">
+                    Под наблюдением
+                </div>
+
+                <div id="watchedCount"
+                    class="dashboard-value">
+                    0
+                </div>
+
             </div>
 
-            <div class="dashboard-row">
-                <span>👀 Наблюдаю</span>
-                <span id="watchedCount">0</span>
-            </div>
+            <div class="dashboard-card">
 
-            <div class="dashboard-row">
-                <span>📋 Всего уникальных</span>
-                <span id="allCount">0</span>
+                <div class="dashboard-icon">
+                    <img class="icon"src="../assets/icons/book.svg">
+                </div>
+
+                <div class="dashboard-name" data-i18n="dashboard.total">
+                    Всего
+                </div>
+
+                <div id="allCount"
+                    class="dashboard-value">
+                    0
+                </div>
+
             </div>
 
         </div>
@@ -70,22 +152,54 @@
 
     <div id="issuesPage" class="page" hidden>
         <div class="issues-toolbar">
+
+            <input
+                id="issuesSearch"
+                type="text"
+                class="issues-search-input"
+                placeholder="Поиск по задачам..."
+                data-i18n-placeholder="issues.searchPlaceholder">
+
             <div class="issues-switch">
-                <button id="filterActive" class="switch-btn active">
+                <button id="filterActive" class="switch-btn active" data-i18n="issues.filterActive">
                     Активные
                 </button>
 
-                <button id="filterAll" class="switch-btn">
+                <button id="filterAll" class="switch-btn" data-i18n="issues.filterAll">
                     Все
                 </button>
             </div>
+
+            <select id="issuesSort" class="issues-sort-select">
+                <option value="updated_desc" data-i18n="issues.sortUpdated">По дате обновления</option>
+                <option value="priority_desc" data-i18n="issues.sortPriority">По приоритету</option>
+                <option value="due_asc" data-i18n="issues.sortDue">По сроку</option>
+                <option value="id_desc" data-i18n="issues.sortIdDesc">По номеру (убыв.)</option>
+                <option value="id_asc" data-i18n="issues.sortIdAsc">По номеру (возр.)</option>
+            </select>
+
         </div>
         <div class="issues-section">
 
             <div class="issues-header" data-target="assignedList">
-                 <span class="arrow">▼</span>👤 Назначены мне (<span id="assignedTotal">0</span>)
-            </div>
 
+                <span class="issues-title" data-i18n="issues.assignedToMe">
+                    Назначены мне
+                </span>
+
+                <div class="issues-header-right">
+
+                    <span class="issues-count" id="assignedTotal">
+                        0
+                    </span>
+
+                    <span class="arrow">
+                        ▼
+                    </span>
+
+                </div>
+
+            </div>
             <div id="assignedList" class="issues-list"></div>
 
         </div>
@@ -93,7 +207,23 @@
         <div class="issues-section">
 
             <div class="issues-header" data-target="authoredList">
-                 <span class="arrow">▼</span>✍ Созданы мной (<span id="authoredTotal">0</span>)
+
+                <span class="issues-title" data-i18n="issues.createdByMe">
+                    Созданы мной
+                </span>
+
+                <div class="issues-header-right">
+
+                    <span class="issues-count" id="authoredTotal">
+                        0
+                    </span>
+
+                    <span class="arrow">
+                        ▼
+                    </span>
+
+                </div>
+
             </div>
 
             <div id="authoredList" class="issues-list" hidden></div>
@@ -103,7 +233,23 @@
         <div class="issues-section">
 
             <div class="issues-header" data-target="watchedList">
-                 <span class="arrow">▼</span>👀 Под наблюдением (<span id="watchedTotal">0</span>)
+
+                <span class="issues-title" data-i18n="issues.watched">
+                    Под наблюдением
+                </span>
+
+                <div class="issues-header-right">
+
+                    <span class="issues-count" id="watchedTotal">
+                        0
+                    </span>
+
+                    <span class="arrow">
+                        ▼
+                    </span>
+
+                </div>
+
             </div>
 
             <div id="watchedList" class="issues-list" hidden></div>
@@ -117,12 +263,13 @@
     <div id="journalPage" class="page" hidden>
 
         <div class="journal-header">
-            <h2>📋 Журнал </h2>
+            <h2><img class="icon"src="../assets/icons/book.svg"> <span data-i18n="journal.title">Журнал</span></h2>
             <button
                 id="clearJournalBtn"
                 class="icon-button"
-                title="Очистить журнал">
-                🗑️
+                title="Очистить журнал"
+                data-i18n-title="journal.clearTooltip">
+                <img class="icon"src="../assets/icons/trash.svg">
             </button>    
         </div>
         <div id="journalList"></div>
@@ -132,94 +279,104 @@
     <!-- =================== НАСТРОЙКИ =================== -->
 
     <div id="settingsPage" class="page" hidden>
+        <div class="settings-panel">
 
-        <label>Адрес Redmine</label>
+            <label data-i18n="settings.serverUrl">Адрес Redmine</label>
 
-        <input
-                id="serverUrl"
-                type="text"
-                placeholder="https://redmine.company.ru">
+            <input
+                    id="serverUrl"
+                    type="text"
+                    placeholder="https://redmine.company.ru"
+                    data-i18n-placeholder="settings.serverUrlPlaceholder">
         
-        <label>API Key</label>
+            <label data-i18n="settings.apiKey">API Key</label>
 
-        <input
-                id="apiKey"
-                type="password"
-                placeholder="Ваш API Key">
+            <input
+                    id="apiKey"
+                    type="password"
+                    placeholder="Ваш API Key"
+                    data-i18n-placeholder="settings.apiKeyPlaceholder">
 
-        <div class="buttons">
+            <div class="buttons">
 
-            <button id="saveBtn"class="primary-button">
-                Сохранить
-            </button>
+                <button id="saveBtn"class="primary-button" data-i18n="settings.save">
+                    Сохранить
+                </button>
 
-            <button id="testBtn"class="primary-button">
-                Синхронизировать
-            </button>
+                <button id="testBtn"class="primary-button" data-i18n="settings.sync">
+                    Синхронизировать
+                </button>
         
-        </div>
-        <div class="settings-divider"></div>
-        <div class="settings-row">
-            <label for="pollInterval">
-                ⏱ Интервал синхронизации
+            </div>
+            <div class="settings-divider"></div>
+            <div class="settings-row">
+                <label for="pollInterval" data-i18n="settings.pollInterval">
+                Синхронизация
+                </label>
+
+                <select id="pollInterval">
+
+                    <option value="30" data-i18n="settings.interval30">
+                        30 секунд
+                    </option>
+
+                    <option value="60" data-i18n="settings.interval60">
+                        1 минута
+                    </option>
+
+                    <option value="120" data-i18n="settings.interval120">
+                        2 минуты
+                    </option>
+
+                    <option value="300" data-i18n="settings.interval300">
+                        5 минут
+                    </option>
+
+                    <option value="600" data-i18n="settings.interval600">
+                        10 минут
+                    </option>
+
+                </select>
+            </div>
+
+            <label class="settings-checkbox">
+                <input type="checkbox"id="startWithWindows">
+                <span data-i18n="settings.startWithWindows">Запускать вместе с Windows</span>
             </label>
 
-            <select id="pollInterval">
+            <label class="settings-checkbox">
+                <input type="checkbox"id="startMinimized">
+                <span data-i18n="settings.startMinimized">Запускать свернутым</span>
+            </label>
 
-                <option value="30">
-                    30 секунд
-                </option>
+            <div class="settings-divider"></div>
+            <div id="statusCard" class="status-card">
 
-                <option value="60">
-                    1 минута
-                </option>
+                <div class="status-avatar">
 
-                <option value="120">
-                    2 минуты
-                </option>
+                    <img class="icon" src="../assets/icons/person.svg">
 
-                <option value="300">
-                    5 минут
-                </option>
+                </div>
 
-                <option value="600">
-                    10 минут
-                </option>
+                <div class="status-content">
 
-            </select>
-        </div>
+                    <div id="statusUserName" class="status-user-name">
+                        —
+                    </div>
 
-        <label class="settings-checkbox">
-            <input type="checkbox"id="startWithWindows">
-            <span>Запускать вместе с Windows</span>
-        </label>
-
-        <label class="settings-checkbox">
-            <input type="checkbox"id="startMinimized">
-            <span>Запускать свернутым</span>
-        </label>
-
-        <div class="settings-divider"></div>
-        <div id="statusCard" class="status-card">
-
-            <div class="status-title">
-                Нет подключения
-            </div>
-
-            <div class="status-user">
-                —
-            </div>
-
-            <div class="status-latency">
-                —
-            </div>
-            <div class="status-sync">
-                Последняя синхронизация: —
+                    <div id="statusUserInfo" class="status-user-info" data-i18n="common.noData">
+                        Нет данных
+                    </div>
+                </div>
             </div>
         </div>
     </div>  
 </div>
 
+<script src="../locales/ru.js"></script>
+<script src="../locales/en.js"></script>
+<script src="services/I18nService.js"></script>
+<script src="services/HtmlUtils.js"></script>
 <script src="SyncService.js"></script>
 <script src="services/IssueRenderer.js"></script>
 <script src="services/JournalService.js"></script>
@@ -228,6 +385,7 @@
 <script src="services/HistoryService.js"></script>
 <script src="services/NotificationBuilder.js"></script>
 <script src="services/IssueFilterService.js"></script>
+<script src="services/IssueSearchService.js"></script>
 <script src="Apps.js"></script>
 <script src="app.js"></script>
 

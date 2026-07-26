@@ -4,6 +4,7 @@ class SettingsService {
     constructor() {
         this.store = new Store({
             name: 'settings',
+            clearInvalidConfig: true,
             defaults: {
                 serverUrl: '',
                 apiKey: '',

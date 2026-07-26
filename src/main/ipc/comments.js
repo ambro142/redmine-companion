@@ -18,6 +18,20 @@ function registerCommentsIpc(){
 
     });
 
+    ipcMain.handle("issue:comment", async (_, issueId, notes)=>{
+
+        const client = new RedmineClient(
+
+            settings.get("serverUrl"),
+
+            settings.get("apiKey")
+
+        );
+
+        return await client.addIssueComment(issueId, notes);
+
+    });
+
 }
 
 module.exports = {

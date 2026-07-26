@@ -23,16 +23,16 @@ class NotificationBuilder {
 
                 case "new":
 
-                    lines.push("🆕 Новая задача");
+                    lines.push(I18nService.t("notification.newIssue"));
                 break;
 
                 case "status":
 
                     lines.push(
                         "🔄" +
-                        change.oldValue +
+                        I18nService.status(change.oldValue) +
                         " → " +
-                        change.newValue
+                        I18nService.status(change.newValue)
                     );
 
                 break;
@@ -50,7 +50,7 @@ class NotificationBuilder {
 
                     lines.push(
                         "📅"+
-                        (change.newValue || "Не указан")
+                        (change.newValue || I18nService.t("common.notSet"))
                     );
 
                 break;
@@ -59,9 +59,9 @@ class NotificationBuilder {
 
                     lines.push(
                         "⚡"+
-                        change.oldValue +
+                        I18nService.priority(change.oldValue) +
                         " → " +
-                        change.newValue
+                        I18nService.priority(change.newValue)
                     );
 
                 break;

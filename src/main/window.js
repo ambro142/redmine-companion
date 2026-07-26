@@ -1,6 +1,7 @@
 const { BrowserWindow } = require("electron");
 const path = require("path");
 const TrayManager = require("./tray/TrayManager");
+const trayInstance = require("./tray/trayInstance");
 let isQuiting = false;
 let mainWindow;
 
@@ -16,7 +17,7 @@ function createWindow() {
 
         minHeight: 600,
 
-        title: "Redmine Notifier 2",
+        title: "Redmine Companion",
 
         webPreferences: {
 
@@ -43,6 +44,7 @@ function createWindow() {
 
     const tray = new TrayManager(mainWindow);
     tray.create();
+    trayInstance.set(tray);
     
     mainWindow.on("close", (event) => {
 

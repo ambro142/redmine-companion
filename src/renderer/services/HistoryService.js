@@ -21,14 +21,21 @@ class HistoryService {
                     issue.updated_on,
                 known:
                     old?.known || false,
+
                 status:
                     issue.status?.name || null,
+                statusId:
+                    issue.status?.id ?? null,
 
                 assigned:
                     issue.assigned_to?.name  || null,
+                assignedId:
+                    issue.assigned_to?.id ?? null,
 
                 priority:
                     issue.priority?.name  || null,
+                priorityId:
+                    issue.priority?.id ?? null,
 
                 due:
                     issue.due_date || null,
@@ -73,23 +80,6 @@ class HistoryService {
 
     }
 
-    async cleanup(activeIds){
-
-        const all =
-            await window.api.getAllHistory();
-
-
-        for(const id of Object.keys(all)){
-
-            if(!activeIds.has(Number(id))){
-
-                await window.api.deleteHistory(id);
-
-            }
-
-        }
-
-    }
 }
 
 window.HistoryService = HistoryService;

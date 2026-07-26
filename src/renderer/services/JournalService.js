@@ -33,25 +33,30 @@ class JournalService {
 
             card.className = "journal-card";
 
+            // Экранируем весь пользовательский/серверный контент перед вставкой
+            // в innerHTML, переносы строк добавляем уже после экранирования.
+            const safeBody =
+                HtmlUtils.escape(entry.body).replace(/\n/g,"<br>");
+
             card.innerHTML = `
 
                 <div class="journal-time">
 
-                    ${entry.time}
+                    ${HtmlUtils.escape(entry.time)}
 
                 </div>
 
                 <div class="journal-title">
 
-                    📋 [${entry.project}] #${entry.id}
+                    📋 [${HtmlUtils.escape(entry.project)}] #${HtmlUtils.escape(String(entry.id))}
 
-                    ${entry.subject}
+                    ${HtmlUtils.escape(entry.subject)}
 
                 </div>
 
                 <div class="journal-body">
 
-                    ${entry.body.replace(/\n/g,"<br>")}
+                    ${safeBody}
 
                 </div>
 

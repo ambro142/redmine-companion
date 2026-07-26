@@ -1,7 +1,7 @@
 {
-  "name": "redmine-notifier2",
-  "productName": "Redmine Notifier",
-  "version": "1.0.0-beta1",
+  "name": "redmine-companion",
+  "productName": "Redmine Companion",
+  "version": "1.1.0-beta2",
   "description": "Desktop companion for Redmine",
   "main": "src/main/main.js",
   "author": "Community",
@@ -48,7 +48,7 @@
       "allowToChangeInstallationDirectory": true,
       "createDesktopShortcut": true,
       "createStartMenuShortcut": true,
-      "shortcutName": "Redmine Notifier"
+      "shortcutName": "Redmine Companion"
     }
   }
 }

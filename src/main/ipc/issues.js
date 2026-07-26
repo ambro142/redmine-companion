@@ -24,6 +24,22 @@ function registerIssuesIpc() {
 
     });
 
+    ipcMain.handle("issue:updateStatus", async (_, issueId, statusId) => {
+
+        Logger.info("Updating issue status " + issueId + " -> " + statusId);
+
+        const client = new RedmineClient(
+
+            settings.get("serverUrl"),
+
+            settings.get("apiKey")
+
+        );
+
+        return await client.updateIssueStatus(issueId, statusId);
+
+    });
+
 }
 
 module.exports = {

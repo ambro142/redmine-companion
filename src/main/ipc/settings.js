@@ -1,6 +1,7 @@
 const { ipcMain } = require("electron");
 const settings = require("../../storage/SettingsService");
 const Logger = require("../../utils/Logger");
+const trayInstance = require("../tray/trayInstance");
 function registerSettingsIpc() {
 
     ipcMain.handle("settings:load", () => {
@@ -18,6 +19,12 @@ function registerSettingsIpc() {
         for (const key in data) {
 
             settings.set(key, data[key]);
+
+        }
+
+        if ("language" in data) {
+
+            trayInstance.get()?.rebuild();
 
         }
 

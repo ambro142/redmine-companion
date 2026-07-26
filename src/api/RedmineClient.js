@@ -78,24 +78,6 @@ class RedmineClient {
 
    }
 
-   async getMyIssues(limit = 100) {
-
-        const response = await this.http.get("/issues.json", {
-
-            params: {
-
-                assigned_to_id: "me",
-                status_id: "*",
-                limit
-
-            }
-
-        });
-
-        return response.data.issues;
-
-    }
-    
     async getProjects() {
 
         const response = await this.http.get("/projects.json");
@@ -216,6 +198,36 @@ class RedmineClient {
             );
 
         return response.data.issue_statuses;
+
+    }
+
+    async updateIssueStatus(issueId, statusId) {
+
+        await this.http.put(
+            `/issues/${issueId}.json`,
+            {
+                issue: {
+                    status_id: statusId
+                }
+            }
+        );
+
+        return true;
+
+    }
+
+    async addIssueComment(issueId, notes) {
+
+        await this.http.put(
+            `/issues/${issueId}.json`,
+            {
+                issue: {
+                    notes
+                }
+            }
+        );
+
+        return true;
 
     }
 }

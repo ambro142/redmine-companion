@@ -13,9 +13,9 @@ class App {
         this.pages = document.querySelectorAll(".page");
         
         this.statusTitle = document.querySelector(".status-title");
-        this.statusUser = document.querySelector(".status-user");
-        this.statusLatency = document.querySelector(".status-latency");
-        this.statusTime = document.querySelector(".status-time");
+        this.statusUserName = document.getElementById("statusUserName");
+        this.statusUserInfo = document.getElementById("statusUserInfo");
+        this.statusCard = document.getElementById("statusCard");
         this.statusSync = document.querySelector(".status-sync");
         this.assignedCount = document.getElementById("assignedCount");
         this.authoredCount = document.getElementById("authoredCount");
@@ -34,16 +34,23 @@ class App {
         this.journal = new JournalService(this.journalList);
         this.history = new HistoryService();
         
-        this.issueFilter = "open";
-        this.filterButtons = document.querySelectorAll('input[name="issueFilter"]');
         this.issueFilter = "active";
         this.filterActiveBtn = document.getElementById("filterActive");
         this.filterAllBtn = document.getElementById("filterAll");
+        this.issuesSearch = document.getElementById("issuesSearch");
+        this.issuesSort = document.getElementById("issuesSort");
+        this.searchQuery = "";
+        this.sortKey = "updated_desc";
         this.pollInterval = document.getElementById("pollInterval");
         this.clearJournalBtn = document.getElementById("clearJournalBtn");
         this.startWithWindows = document.getElementById("startWithWindows");
         this.startMinimized = document.getElementById("startMinimized");
-        
+
+        this.langRuBtn = document.getElementById("langRu");
+        this.langEnBtn = document.getElementById("langEn");
+        this.connectionState = null;
+        this.connectionData = {};
+
         this.settings = {};
         this.registerEvents();
         this.startup();
@@ -108,28 +115,133 @@ class App {
 
         });
 
-        this.filterButtons.forEach(button => {
-
-            button.addEventListener("change", () => {
-
-                this.issueFilter = button.value;
-
-                if (this.lastDashboard) {
-
-                    this.renderIssues(this.lastDashboard);
-
-                }
-
-            });
-
-        });
-
         this.clearJournalBtn.addEventListener("click",() => { this.journal.clear();}
         );
 
         this.startWithWindows.addEventListener("change",() => this.saveSettings(true));
         this.startMinimized.addEventListener("change",() => this.saveSettings(true));
         this.pollInterval.addEventListener("change",() => this.saveSettings());
+
+        this.langRuBtn.addEventListener("click", () => this.setLanguage("ru"));
+        this.langEnBtn.addEventListener("click", () => this.setLanguage("en"));
+
+        this.issuesSearch.addEventListener("input", () => {
+
+            this.searchQuery = this.issuesSearch.value;
+
+            if (this.lastDashboard) {
+                this.renderIssues(this.lastDashboard);
+            }
+
+        });
+
+        this.issuesSort.addEventListener("change", () => {
+
+            this.sortKey = this.issuesSort.value;
+
+            if (this.lastDashboard) {
+                this.renderIssues(this.lastDashboard);
+            }
+
+        });
+    }
+
+    async handleStatusChange(issue, newStatusId) {
+
+        await window.api.updateIssueStatus(issue.id, newStatusId);
+
+        const statusInfo = (this.lastDashboard?.statuses || [])
+            .find(status => status.id === newStatusId);
+
+        issue.status = {
+
+            id: newStatusId,
+            name: statusInfo ? statusInfo.name : issue.status.name
+
+        };
+
+        await this.history.update(issue);
+
+        if (this.lastDashboard) {
+            this.renderIssues(this.lastDashboard);
+        }
+
+    }
+
+    async handleComment(issue, text) {
+
+        await window.api.addIssueComment(issue.id, text);
+
+        try {
+
+            const fullIssue = await window.api.loadIssue(issue.id);
+            const lastJournal = CommentService.getLastJournal(fullIssue);
+
+            if (lastJournal) {
+                await this.history.setLastJournal(issue.id, lastJournal.id);
+            }
+
+        } catch (ex) {
+
+            // Не критично: при следующей синхронизации в худшем случае
+            // придёт повторное уведомление о собственном комментарии.
+
+        }
+
+    }
+
+    setLanguage(lang, options = {}) {
+
+        const silent = options.silent || false;
+
+        I18nService.setLanguage(lang);
+
+        this.langRuBtn.classList.toggle("active", lang === "ru");
+        this.langEnBtn.classList.toggle("active", lang === "en");
+
+        this.settings.language = lang;
+
+        if (!silent) {
+            window.api.saveSettings({ language: lang });
+        }
+
+        if (this.lastDashboard) {
+            this.renderIssues(this.lastDashboard);
+        }
+
+        this.refreshStatusUI();
+
+    }
+
+    refreshStatusUI() {
+
+        switch (this.connectionState) {
+
+            case "connecting":
+                this.statusTitle.innerText = I18nService.t("status.connecting");
+                break;
+
+            case "connected":
+                this.statusTitle.innerText = I18nService.t("status.connected");
+                this.statusUserInfo.innerText = I18nService.t("status.connectedInfo");
+                this.statusSync.innerText =
+                    I18nService.t("header.lastSync") + " " + this.connectionData.syncTime;
+                break;
+
+            case "error":
+                this.statusTitle.innerText = I18nService.t("status.error");
+                this.statusUserName.innerText = I18nService.t("status.error");
+                break;
+
+            case "saved":
+                this.statusTitle.innerText = I18nService.t("status.settingsSaved");
+                break;
+
+            default:
+                break;
+
+        }
+
     }
 
     async startup() {
@@ -141,25 +253,7 @@ class App {
                 this.sync();
             });
         }
-    }
-
-   initializeHistory(dashboard){
-
-        if(this.initialized)
-            return;
-
-
-        dashboard.all.forEach(issue=>{
-
-            this.history.save(issue);
-
-        });
-
-
-    this.initialized=true;
-
-}
-    
+    } 
 
     async loadSettings() {
         const settings = await window.api.loadSettings();
@@ -169,6 +263,7 @@ class App {
         this.pollInterval.value = settings.pollInterval || 60;
         this.startWithWindows.checked = settings.startWithWindows;
         this.startMinimized.checked = settings.startMinimized;
+        this.setLanguage(settings.language || "ru", { silent: true });
     }
 
     async saveSettings(silent=false) {
@@ -183,17 +278,22 @@ class App {
         });
         await window.api.setLoginItemSettings(this.startWithWindows.checked);
         if(!silent){
-            this.statusTitle.innerText = "💾 Настройки сохранены";
-            this.statusUser.innerText = "";
-            this.statusLatency.innerText = "";
-            this.statusTime.innerText = "";
+            this.connectionState = "saved";
+            this.statusTitle.innerText = I18nService.t("status.settingsSaved");
+            this.statusUserName.innerText = "";
+            this.statusUserInfo.innerText = "";
+        }
+        if (this.serverUrl.value && this.apiKey.value) {
+            await this.sync();
+            this.startAutoSync();
+
         }
     }
 
     async sync() {
-        this.statusTitle.innerText = "⏳ Проверяем подключение...";
-        this.statusUser.innerText = "";
-        this.statusLatency.innerText = "";
+        this.connectionState = "connecting";
+        this.statusTitle.innerText = I18nService.t("status.connecting");
+        this.statusUserName.innerText = "";
 
         try {
 
@@ -207,22 +307,24 @@ class App {
             
             this.lastDashboard =dashboard;
 
-            this.statusTitle.innerText = "🟢 Подключено";
+            this.connectionState = "connected";
+            this.statusTitle.innerText = I18nService.t("status.connected");
 
-            this.statusUser.innerText =
-                "Пользователь: " +
+           this.statusUserName.innerText =
                 info.user.firstname +
                 " " +
                 info.user.lastname;
 
-            this.statusLatency.innerText =
-                "Отклик: " +
-                info.latency +
-                " ms";
+            this.statusUserInfo.innerText =
+                I18nService.t("status.connectedInfo");
+
+            this.statusCard.className =
+                "status-card connected";
 
             const now = new Date().toLocaleTimeString();
+            this.connectionData.syncTime = now;
             this.statusSync.innerText =
-                "Последняя синхронизация: " + now;
+                I18nService.t("header.lastSync") + " " + now;
             this.renderIssues(dashboard);
             // ищем изменения
             await this.compareIssues(
@@ -241,11 +343,16 @@ class App {
         }
         catch (ex) {
 
-            this.statusTitle.innerText = "🔴 Ошибка подключения";
-            this.statusUser.innerText = ex.message;
-            this.statusLatency.innerText = "";
-            this.statusTime.innerText =
-                new Date().toLocaleTimeString();
+            this.connectionState = "error";
+            this.statusTitle.innerText = I18nService.t("status.error");
+            this.statusUserName.innerText =
+                I18nService.t("status.error");
+
+            this.statusUserInfo.innerText =
+                ex.message;
+
+            this.statusCard.className =
+                "status-card error";
 
         }
     }
@@ -277,6 +384,14 @@ class App {
         authored = IssueFilterService.filter(authored,this.issueFilter,this.closedStatuses);
         watched = IssueFilterService.filter(watched,this.issueFilter,this.closedStatuses );
 
+        assigned = IssueSearchService.filterByQuery(assigned, this.searchQuery);
+        authored = IssueSearchService.filterByQuery(authored, this.searchQuery);
+        watched = IssueSearchService.filterByQuery(watched, this.searchQuery);
+
+        assigned = IssueSearchService.sort(assigned, this.sortKey);
+        authored = IssueSearchService.sort(authored, this.sortKey);
+        watched = IssueSearchService.sort(watched, this.sortKey);
+
         this.assignedList.innerHTML = "";
         this.authoredList.innerHTML = "";
         this.watchedList.innerHTML = "";
@@ -284,12 +399,20 @@ class App {
         this.authoredTotal.innerText = authored.length;
         this.watchedTotal.innerText = watched.length;
 
+        const renderOptions = {
+
+            statuses: dashboard.statuses || [],
+            onStatusChange: (issue, statusId) => this.handleStatusChange(issue, statusId),
+            onComment: (issue, text) => this.handleComment(issue, text)
+
+        };
+
         const shown = new Set();
 
         assigned.forEach(issue => {
 
             this.assignedList.appendChild(
-                IssueRenderer.create(issue)
+                IssueRenderer.create(issue, renderOptions)
             );
 
             shown.add(issue.id);
@@ -302,7 +425,7 @@ class App {
                 return;
 
             this.authoredList.appendChild(
-                IssueRenderer.create(issue)
+                IssueRenderer.create(issue, renderOptions)
             );
 
             shown.add(issue.id);
@@ -315,7 +438,7 @@ class App {
                 return;
 
             this.watchedList.appendChild(
-                IssueRenderer.create(issue)
+                IssueRenderer.create(issue, renderOptions)
             );
 
             shown.add(issue.id);
@@ -525,7 +648,7 @@ class App {
             time: new Date().toLocaleTimeString(),
 
             project:
-                issue.project?.name || "Без проекта",
+                issue.project?.name || I18nService.t("common.noProject"),
 
             id:
                 issue.id,
@@ -542,103 +665,6 @@ class App {
             notification.title,
             notification.body
         );
-
-    }
-
-    async checkComments(issue){
-        const state = await window.api.getHistory(issue.id);
-        const fullIssue = await window.api.loadIssue(issue.id);
-
-        const journal = CommentService.getLastJournal(fullIssue);
-
-        if(!journal)
-            return;
-
-        if(!CommentService.hasComment(journal))
-            return;
-
-        if( state && state.lastJournalId===journal.id)
-            return;
-
-        this.journal.add(
-
-            "💬 "+
-
-            journal.user.name+
-
-            " оставил комментарий"
-
-        );
-        
-
-        window.api.showNotification(
-
-            "["+
-
-            issue.project.name+
-
-            "] #"+
-
-            issue.id,
-
-            journal.user.name+
-
-            "\n\n"+
-
-            journal.notes
-
-        );
-        await window.api.saveHistory(issue.id,
-            {
-
-            updatedOn:issue.updated_on,
-
-            lastJournalId:journal.id
-
-            }
-
-        );
-
-    }
-
-    async checkMissedChanges(dashboard){
-
-        const changes =
-            await CompareService.compareFromHistory(
-                dashboard
-            );
-
-
-        if(changes.length===0)
-            return;
-
-
-        if(changes.length > 5){
-
-            window.api.showNotification(
-
-                "Redmine",
-
-                "За время отсутствия:\n\n"+
-                changes.length+
-                " изменений"
-
-            );
-
-            return;
-
-        }
-
-
-        for(const change of changes){
-
-            await this.processIssueChanges(
-                [change]
-            );
-            await this.history.update(
-                change.issue
-            );
-        }
 
     }
 

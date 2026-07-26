@@ -1,5 +1,6 @@
 const { Tray, Menu, app } = require("electron");
 const path = require("path");
+const { t } = require("../i18n");
 
 class TrayManager {
 
@@ -28,56 +29,67 @@ class TrayManager {
 
         });
 
-        this.tray.setContextMenu(
+        this.tray.setContextMenu(this.buildMenu());
 
-            Menu.buildFromTemplate([
-                
-                {
-                    label: "📂 Открыть",
+    }
 
-                    click: () => {
+    buildMenu() {
 
-                        this.window.show();
+        return Menu.buildFromTemplate([
 
-                        if (this.window.isMinimized())
-                            this.window.restore();
+            {
+                label: t("tray.open"),
 
-                            this.window.focus();
+                click: () => {
 
-                    }
+                    this.window.show();
 
-                },
+                    if (this.window.isMinimized())
+                        this.window.restore();
 
-                {
-                    label: "🔄 Синхронизировать сейчас",
+                        this.window.focus();
 
-                    click: () => {
+                }
 
-                        this.window.webContents.send(
+            },
 
-                            "tray:sync"
+            {
+                label: t("tray.syncNow"),
 
-                        );
+                click: () => {
 
-                    }
+                    this.window.webContents.send(
 
-                },
+                        "tray:sync"
 
-                {
-                    label: "❌ Выход",
+                    );
 
-                    click: () => {
+                }
 
-                        this.window.isQuiting = true;
+            },
 
-                          app.quit();
+            {
+                label: t("tray.exit"),
 
-                    }
-                },
+                click: () => {
 
-            ])
+                    this.window.isQuiting = true;
 
-        );
+                      app.quit();
+
+                }
+            },
+
+        ]);
+
+    }
+
+    rebuild() {
+
+        if (!this.tray)
+            return;
+
+        this.tray.setContextMenu(this.buildMenu());
 
     }
 

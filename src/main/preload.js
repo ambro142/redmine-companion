@@ -18,10 +18,6 @@ contextBridge.exposeInMainWorld('api', {
        return ipcRenderer.invoke("redmine:info");
     },
 
-    loadMyIssues() {
-        return ipcRenderer.invoke("issues:mine");
-    },
-
     loadDashboard(){
         return ipcRenderer.invoke("dashboard:load");
     },
@@ -72,6 +68,26 @@ contextBridge.exposeInMainWorld('api', {
 
             data
 
+        );
+
+    },
+
+    updateIssueStatus(issueId, statusId){
+
+        return ipcRenderer.invoke(
+            "issue:updateStatus",
+            issueId,
+            statusId
+        );
+
+    },
+
+    addIssueComment(issueId, notes){
+
+        return ipcRenderer.invoke(
+            "issue:comment",
+            issueId,
+            notes
         );
 
     },

@@ -8,7 +8,8 @@ class HistoryStorage {
 
         this.store = new Store({
 
-            name: "history"
+            name: "history",
+            clearInvalidConfig: true
 
         });
 
