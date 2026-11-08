@@ -1339,3 +1339,156 @@ button{
 
 }
 
+/* =====================================================================
+   Иконки (assets/icons/*.svg)
+   Иконка рисуется как маска и берёт цвет текста вокруг (currentColor).
+   Использование: <span class="ico ico-person"></span>  или  Icon.html("person")
+   Префикс -webkit- нужен для Electron 22 (Chromium 108).
+   ===================================================================== */
+
+.ico{
+    display:inline-block;
+    flex:none;
+    width:1.15em;
+    height:1.15em;
+    vertical-align:-0.2em;
+    background-color:currentColor;
+    -webkit-mask-image:var(--ico);
+    -webkit-mask-repeat:no-repeat;
+    -webkit-mask-position:center;
+    -webkit-mask-size:contain;
+    mask-image:var(--ico);
+    mask-repeat:no-repeat;
+    mask-position:center;
+    mask-size:contain;
+}
+
+.icon.ico{
+    width:32px;
+    height:32px;
+}
+
+.ico-person{--ico:url("../assets/icons/person.svg");}
+.ico-edit{--ico:url("../assets/icons/edit.svg");}
+.ico-eye{--ico:url("../assets/icons/eye.svg");}
+.ico-book{--ico:url("../assets/icons/book.svg");}
+.ico-trash{--ico:url("../assets/icons/trash.svg");}
+.ico-calendar{--ico:url("../assets/icons/calendar.svg");}
+.ico-chat{--ico:url("../assets/icons/chat.svg");}
+.ico-add{--ico:url("../assets/icons/add.svg");}
+.ico-flag{--ico:url("../assets/icons/flag.svg");}
+.ico-sync{--ico:url("../assets/icons/sync.svg");}
+.ico-check{--ico:url("../assets/icons/check.svg");}
+.ico-warning{--ico:url("../assets/icons/warning.svg");}
+.ico-chevron-down{--ico:url("../assets/icons/chevron-down.svg");}
+.ico-folder{--ico:url("../assets/icons/folder.svg");}
+.ico-close{--ico:url("../assets/icons/close.svg");}
+.ico-settings{--ico:url("../assets/icons/settings.svg");}
+.ico-server{--ico:url("../assets/icons/server.svg");}
+
+/* Мелкие иконки в тексте */
+
+.issue-meta > span,
+.issue-reply-btn{
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
+}
+
+.journal-title .ico{
+    margin-right:4px;
+}
+
+.journal-line{
+    display:flex;
+    align-items:flex-start;
+    gap:8px;
+    margin:4px 0;
+}
+
+.journal-line .ico{
+    margin-top:2px;
+    color:var(--muted);
+}
+
+/* Стрелка сворачивания секций */
+
+.arrow{
+    display:inline-flex;
+    align-items:center;
+}
+
+.arrow .ico{
+    width:22px;
+    height:22px;
+    transition:transform .2s;
+}
+
+.arrow.collapsed .ico{
+    transform:rotate(-90deg);
+}
+
+/* Иконка перед заголовком статуса подключения */
+
+.status-title::before{
+    content:"";
+    display:none;
+    width:20px;
+    height:20px;
+    margin-right:8px;
+    vertical-align:-4px;
+    background-color:currentColor;
+    -webkit-mask-repeat:no-repeat;
+    -webkit-mask-position:center;
+    -webkit-mask-size:contain;
+    mask-repeat:no-repeat;
+    mask-position:center;
+    mask-size:contain;
+}
+
+.status-title[data-state]::before{
+    display:inline-block;
+}
+
+.status-title[data-state="connecting"]::before{
+    -webkit-mask-image:url("../assets/icons/sync.svg");
+    mask-image:url("../assets/icons/sync.svg");
+    background-color:var(--muted);
+    animation:ico-spin 1s linear infinite;
+}
+
+.status-title[data-state="connected"]::before{
+    -webkit-mask-image:url("../assets/icons/check.svg");
+    mask-image:url("../assets/icons/check.svg");
+    background-color:var(--success);
+}
+
+.status-title[data-state="error"]::before{
+    -webkit-mask-image:url("../assets/icons/warning.svg");
+    mask-image:url("../assets/icons/warning.svg");
+    background-color:var(--danger);
+}
+
+.status-title[data-state="saved"]::before{
+    -webkit-mask-image:url("../assets/icons/check.svg");
+    mask-image:url("../assets/icons/check.svg");
+    background-color:var(--accent);
+}
+
+@keyframes ico-spin{
+    to{ transform:rotate(360deg); }
+}
+
+/* Галочка у сообщения "Комментарий отправлен" */
+
+.issue-action-feedback.success::before{
+    content:"";
+    display:inline-block;
+    width:14px;
+    height:14px;
+    margin-right:6px;
+    vertical-align:-2px;
+    background-color:currentColor;
+    -webkit-mask:url("../assets/icons/check.svg") center/contain no-repeat;
+    mask:url("../assets/icons/check.svg") center/contain no-repeat;
+}

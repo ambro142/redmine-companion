@@ -1,6 +1,16 @@
-const { Tray, Menu, app } = require("electron");
+const { Tray, Menu, app, nativeImage } = require("electron");
 const path = require("path");
 const { t } = require("../i18n");
+
+// Иконки пунктов меню: assets/tray/<name>.png (16px) и <name>@2x.png (32px).
+// Electron сам берёт @2x на экранах с масштабом.
+function menuIcon(name) {
+
+    return nativeImage.createFromPath(
+        path.join(__dirname, "../../assets/tray", name + ".png")
+    );
+
+}
 
 class TrayManager {
 
@@ -19,7 +29,7 @@ class TrayManager {
 
         );
 
-        this.tray.setToolTip("Redmine Notifier");
+        this.tray.setToolTip("Redmine Companion");
 
         this.tray.on("double-click", () => {
 
@@ -39,6 +49,7 @@ class TrayManager {
 
             {
                 label: t("tray.open"),
+                icon: menuIcon("folder"),
 
                 click: () => {
 
@@ -55,6 +66,7 @@ class TrayManager {
 
             {
                 label: t("tray.syncNow"),
+                icon: menuIcon("sync"),
 
                 click: () => {
 
@@ -70,6 +82,7 @@ class TrayManager {
 
             {
                 label: t("tray.exit"),
+                icon: menuIcon("close"),
 
                 click: () => {
 

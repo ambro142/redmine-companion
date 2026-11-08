@@ -79,7 +79,7 @@
             <div class="dashboard-card">
 
                 <div class="dashboard-icon">
-                    <img class="icon"src="../assets/icons/person.svg">
+                    <span class="icon ico ico-person" aria-hidden="true"></span>
                 </div>
 
                 <div class="dashboard-name" data-i18n="dashboard.assigned">
@@ -96,7 +96,7 @@
             <div class="dashboard-card">
 
                 <div class="dashboard-icon">
-                    <img class="icon"src="../assets/icons/edit.svg">
+                    <span class="icon ico ico-edit" aria-hidden="true"></span>
                 </div>
 
                 <div class="dashboard-name" data-i18n="dashboard.authored">
@@ -113,7 +113,7 @@
             <div class="dashboard-card">
 
                 <div class="dashboard-icon">
-                    <img class="icon"src="../assets/icons/eye.svg">
+                    <span class="icon ico ico-eye" aria-hidden="true"></span>
                 </div>
 
                 <div class="dashboard-name" data-i18n="dashboard.watched">
@@ -130,7 +130,7 @@
             <div class="dashboard-card">
 
                 <div class="dashboard-icon">
-                    <img class="icon"src="../assets/icons/book.svg">
+                    <span class="icon ico ico-book" aria-hidden="true"></span>
                 </div>
 
                 <div class="dashboard-name" data-i18n="dashboard.total">
@@ -194,7 +194,7 @@
                     </span>
 
                     <span class="arrow">
-                        ▼
+                        <span class="ico ico-chevron-down" aria-hidden="true"></span>
                     </span>
 
                 </div>
@@ -219,7 +219,7 @@
                     </span>
 
                     <span class="arrow">
-                        ▼
+                        <span class="ico ico-chevron-down" aria-hidden="true"></span>
                     </span>
 
                 </div>
@@ -245,7 +245,7 @@
                     </span>
 
                     <span class="arrow">
-                        ▼
+                        <span class="ico ico-chevron-down" aria-hidden="true"></span>
                     </span>
 
                 </div>
@@ -263,13 +263,13 @@
     <div id="journalPage" class="page" hidden>
 
         <div class="journal-header">
-            <h2><img class="icon"src="../assets/icons/book.svg"> <span data-i18n="journal.title">Журнал</span></h2>
+            <h2><span class="icon ico ico-book" aria-hidden="true"></span> <span data-i18n="journal.title">Журнал</span></h2>
             <button
                 id="clearJournalBtn"
                 class="icon-button"
                 title="Очистить журнал"
                 data-i18n-title="journal.clearTooltip">
-                <img class="icon"src="../assets/icons/trash.svg">
+                <span class="icon ico ico-trash" aria-hidden="true"></span>
             </button>    
         </div>
         <div id="journalList"></div>
@@ -354,7 +354,7 @@
 
                 <div class="status-avatar">
 
-                    <img class="icon" src="../assets/icons/person.svg">
+                    <span class="icon ico ico-person" aria-hidden="true"></span>
 
                 </div>
 
@@ -378,6 +378,7 @@
 <script src="services/I18nService.js"></script>
 <script src="services/HtmlUtils.js"></script>
 <script src="SyncService.js"></script>
+<script src="services/Icon.js"></script>
 <script src="services/IssueRenderer.js"></script>
 <script src="services/JournalService.js"></script>
 <script src="services/CompareService.js"></script>

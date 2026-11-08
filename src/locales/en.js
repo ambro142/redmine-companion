@@ -27,7 +27,7 @@
         "issues.commentPlaceholder": "Comment...",
         "issues.send": "Send",
         "issues.cancel": "Cancel",
-        "issues.commentSent": "✔ Comment sent",
+        "issues.commentSent": "Comment sent",
         "issues.actionError": "Error",
 
         "issues.searchPlaceholder": "Search issues...",
@@ -61,17 +61,21 @@
         "common.notSet": "Not set",
         "common.noData": "No data",
 
-        "status.connecting": "⏳ Checking connection...",
-        "status.connected": "🟢 Connected",
+        "status.connecting": "Checking connection...",
+        "status.connected": "Connected",
         "status.connectedInfo": "Connection established",
-        "status.error": "🔴 Connection error",
-        "status.settingsSaved": "💾 Settings saved",
+        "status.error": "Connection error",
+        "status.settingsSaved": "Settings saved",
 
-        "notification.newIssue": "🆕 New issue",
+        "notification.status": "Status",
+        "notification.assigned": "Assignee",
+        "notification.due": "Due date",
+        "notification.priority": "Priority",
+        "notification.newIssue": "New issue",
 
-        "tray.open": "📂 Open",
-        "tray.syncNow": "🔄 Sync now",
-        "tray.exit": "❌ Exit",
+        "tray.open": "Open",
+        "tray.syncNow": "Sync now",
+        "tray.exit": "Exit",
 
         "statusNames": {
             "Новая": "New",

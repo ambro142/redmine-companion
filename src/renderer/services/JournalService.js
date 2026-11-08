@@ -34,9 +34,17 @@ class JournalService {
             card.className = "journal-card";
 
             // Экранируем весь пользовательский/серверный контент перед вставкой
-            // в innerHTML, переносы строк добавляем уже после экранирования.
+            // в innerHTML. Если у записи есть строки с иконками - рисуем их,
+            // иначе (старые записи) - просто текст с переносами.
             const safeBody =
-                HtmlUtils.escape(entry.body).replace(/\n/g,"<br>");
+                Array.isArray(entry.items) && entry.items.length
+                    ? entry.items.map(item =>
+                        '<div class="journal-line">' +
+                            Icon.html(item.icon) +
+                            '<span>' + HtmlUtils.escape(item.text) + '</span>' +
+                        '</div>'
+                    ).join("")
+                    : HtmlUtils.escape(entry.body).replace(/\n/g,"<br>");
 
             card.innerHTML = `
 
@@ -48,7 +56,7 @@ class JournalService {
 
                 <div class="journal-title">
 
-                    📋 [${HtmlUtils.escape(entry.project)}] #${HtmlUtils.escape(String(entry.id))}
+                    ${Icon.html("book")} [${HtmlUtils.escape(entry.project)}] #${HtmlUtils.escape(String(entry.id))}
 
                     ${HtmlUtils.escape(entry.subject)}
 

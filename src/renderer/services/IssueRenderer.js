@@ -67,13 +67,13 @@ class IssueRenderer {
 
                 <span>
 
-                    👤 ${HtmlUtils.escape(assigned)}
+                    ${Icon.html("person")} ${HtmlUtils.escape(assigned)}
 
                 </span>
 
                 <span>
 
-                    📅 ${HtmlUtils.escape(due)}
+                    ${Icon.html("calendar")} ${HtmlUtils.escape(due)}
 
                 </span>
 
@@ -95,7 +95,7 @@ class IssueRenderer {
 
                 <button type="button" class="issue-reply-btn">
 
-                    💬 ${HtmlUtils.escape(I18nService.t("issues.reply"))}
+                    ${Icon.html("chat")} ${HtmlUtils.escape(I18nService.t("issues.reply"))}
 
                 </button>
 

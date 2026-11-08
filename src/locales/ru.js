@@ -27,7 +27,7 @@
         "issues.commentPlaceholder": "Комментарий...",
         "issues.send": "Отправить",
         "issues.cancel": "Отмена",
-        "issues.commentSent": "✔ Комментарий отправлен",
+        "issues.commentSent": "Комментарий отправлен",
         "issues.actionError": "Ошибка",
 
         "issues.searchPlaceholder": "Поиск по задачам...",
@@ -61,17 +61,21 @@
         "common.notSet": "Не указан",
         "common.noData": "Нет данных",
 
-        "status.connecting": "⏳ Проверяем подключение...",
-        "status.connected": "🟢 Подключено",
+        "status.connecting": "Проверяем подключение...",
+        "status.connected": "Подключено",
         "status.connectedInfo": "Подключение установлено",
-        "status.error": "🔴 Ошибка подключения",
-        "status.settingsSaved": "💾 Настройки сохранены",
+        "status.error": "Ошибка подключения",
+        "status.settingsSaved": "Настройки сохранены",
 
-        "notification.newIssue": "🆕 Новая задача",
+        "notification.status": "Статус",
+        "notification.assigned": "Исполнитель",
+        "notification.due": "Срок",
+        "notification.priority": "Приоритет",
+        "notification.newIssue": "Новая задача",
 
-        "tray.open": "📂 Открыть",
-        "tray.syncNow": "🔄 Синхронизировать сейчас",
-        "tray.exit": "❌ Выход",
+        "tray.open": "Открыть",
+        "tray.syncNow": "Синхронизировать сейчас",
+        "tray.exit": "Выход",
 
         "statusNames": {
             "Новая": "Новая",

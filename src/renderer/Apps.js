@@ -112,7 +112,7 @@ class App {
                 const block=document.getElementById(id);
                 const arrow = header.querySelector(".arrow");
                 block.hidden=!block.hidden;
-                arrow.innerText = block.hidden ? "▶" : "▼";
+                arrow.classList.toggle("collapsed", block.hidden);
             });
 
         });
@@ -215,28 +215,36 @@ class App {
 
     }
 
+    // Иконка рядом с заголовком статуса рисуется в CSS по data-state
+    setStatusTitle(state, key) {
+
+        this.statusTitle.dataset.state = state;
+        this.statusTitle.textContent = I18nService.t(key);
+
+    }
+
     refreshStatusUI() {
 
         switch (this.connectionState) {
 
             case "connecting":
-                this.statusTitle.innerText = I18nService.t("status.connecting");
+                this.setStatusTitle("connecting", "status.connecting");
                 break;
 
             case "connected":
-                this.statusTitle.innerText = I18nService.t("status.connected");
+                this.setStatusTitle("connected", "status.connected");
                 this.statusUserInfo.innerText = I18nService.t("status.connectedInfo");
                 this.statusSync.innerText =
                     I18nService.t("header.lastSync") + " " + this.connectionData.syncTime;
                 break;
 
             case "error":
-                this.statusTitle.innerText = I18nService.t("status.error");
+                this.setStatusTitle("error", "status.error");
                 this.statusUserName.innerText = I18nService.t("status.error");
                 break;
 
             case "saved":
-                this.statusTitle.innerText = I18nService.t("status.settingsSaved");
+                this.setStatusTitle("saved", "status.settingsSaved");
                 break;
 
             default:
@@ -281,7 +289,7 @@ class App {
         await window.api.setLoginItemSettings(this.startWithWindows.checked);
         if(!silent){
             this.connectionState = "saved";
-            this.statusTitle.innerText = I18nService.t("status.settingsSaved");
+            this.setStatusTitle("saved", "status.settingsSaved");
             this.statusUserName.innerText = "";
             this.statusUserInfo.innerText = "";
         }
@@ -300,7 +308,7 @@ class App {
         this.syncing = true;
 
         this.connectionState = "connecting";
-        this.statusTitle.innerText = I18nService.t("status.connecting");
+        this.setStatusTitle("connecting", "status.connecting");
         this.statusUserName.innerText = "";
 
         try {
@@ -316,7 +324,7 @@ class App {
             this.lastDashboard =dashboard;
 
             this.connectionState = "connected";
-            this.statusTitle.innerText = I18nService.t("status.connected");
+            this.setStatusTitle("connected", "status.connected");
 
            this.statusUserName.innerText =
                 info.user.firstname +
@@ -354,7 +362,7 @@ class App {
             console.error("[sync]", ex);
 
             this.connectionState = "error";
-            this.statusTitle.innerText = I18nService.t("status.error");
+            this.setStatusTitle("error", "status.error");
             this.statusUserName.innerText =
                 I18nService.t("status.error");
 
@@ -669,7 +677,9 @@ class App {
                 issue.subject,
 
             body:
-                notification.body
+                notification.body,
+
+            items: notification.items
 
         });
 

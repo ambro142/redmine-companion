@@ -1,4 +1,7 @@
 const { Notification } = require("electron");
+const path = require("path");
+
+const APP_ICON = path.join(__dirname, "../assets/icon.png");
 
 class NotificationService {
 
@@ -12,7 +15,8 @@ class NotificationService {
         const notification = new Notification({
 
             title,
-            body
+            body,
+            icon: APP_ICON
 
         });
 

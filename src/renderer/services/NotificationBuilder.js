@@ -1,5 +1,9 @@
 class NotificationBuilder {
 
+    // Возвращает:
+    //   title - заголовок системного уведомления
+    //   body  - обычный текст для системного уведомления (там иконки невозможны)
+    //   items - те же строки со ссылкой на иконку, ими пользуется журнал в окне приложения
     static build(issue, changes, journal) {
 
         const title =
@@ -8,13 +12,14 @@ class NotificationBuilder {
             " " +
             issue.subject;
 
-        const lines = [];
+        const items = [];
+
+        const add = (icon, text) => items.push({ icon, text });
 
         if (journal && journal.notes && journal.notes.trim() !== "") {
 
-            lines.push("💬 " + journal.user.name + ": " +
-            journal.notes);
-        
+            add("chat", journal.user.name + ": " + journal.notes);
+
         }
 
         for (const change of changes) {
@@ -23,13 +28,15 @@ class NotificationBuilder {
 
                 case "new":
 
-                    lines.push(I18nService.t("notification.newIssue"));
+                    add("add", I18nService.t("notification.newIssue"));
+
                 break;
 
                 case "status":
 
-                    lines.push(
-                        "🔄" +
+                    add(
+                        "sync",
+                        I18nService.t("notification.status") + ": " +
                         I18nService.status(change.oldValue) +
                         " → " +
                         I18nService.status(change.newValue)
@@ -39,8 +46,9 @@ class NotificationBuilder {
 
                 case "assigned":
 
-                    lines.push(
-                        "👤"+
+                    add(
+                        "person",
+                        I18nService.t("notification.assigned") + ": " +
                         change.newValue
                     );
 
@@ -48,8 +56,9 @@ class NotificationBuilder {
 
                 case "due":
 
-                    lines.push(
-                        "📅"+
+                    add(
+                        "calendar",
+                        I18nService.t("notification.due") + ": " +
                         (change.newValue || I18nService.t("common.notSet"))
                     );
 
@@ -57,8 +66,9 @@ class NotificationBuilder {
 
                 case "priority":
 
-                    lines.push(
-                        "⚡"+
+                    add(
+                        "flag",
+                        I18nService.t("notification.priority") + ": " +
                         I18nService.priority(change.oldValue) +
                         " → " +
                         I18nService.priority(change.newValue)
@@ -68,15 +78,15 @@ class NotificationBuilder {
 
             }
 
-            lines.push("");
-
         }
 
         return {
 
             title,
 
-            body: lines.join("\n").trim()
+            body: items.map(item => item.text).join("\n").trim(),
+
+            items
 
         };
 
