@@ -1,6 +1,6 @@
 const { app } = require("electron");
 const {Menu} = require("electron");
-app.setAppUserModelId("Redmine Notifier")
+app.setAppUserModelId("Redmine Companion")
 const { createWindow } = require("./window");
 const { registerSettingsIpc } = require("./ipc/settings");
 const { registerRedmineIpc } = require("./ipc/redmine");

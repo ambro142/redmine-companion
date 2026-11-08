@@ -4,7 +4,20 @@ class RedmineClient {
 
     constructor(serverUrl, apiKey) {
 
-        this.serverUrl = serverUrl.replace(/\/$/, "");
+        if (!serverUrl || !apiKey) {
+            throw new Error("Redmine serverUrl/apiKey is not configured");
+        }
+
+        serverUrl = String(serverUrl).trim();
+        apiKey = String(apiKey).trim();
+
+        if (!/^https?:\/\//i.test(serverUrl)) {
+            serverUrl = "https://" + serverUrl;
+        }
+
+        serverUrl = serverUrl.replace(/\/+$/, "");
+
+        this.serverUrl = serverUrl;
         this.apiKey = apiKey;
 
         this.http = axios.create({

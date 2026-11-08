@@ -25,7 +25,9 @@ function createWindow() {
 
              contextIsolation:true,
 
-             nodeIntegration:false
+             nodeIntegration:false,
+
+             backgroundThrottling:false
 
         }
 

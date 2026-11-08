@@ -30,6 +30,8 @@ class App {
         this.syncService = new window.SyncService();
         this.issuesList = document.getElementById("issuesList");
         this.syncInterval = null;
+        this.syncing = false;
+        this.syncRetryCount = 0;
         this.journalList = document.getElementById("journalList");
         this.journal = new JournalService(this.journalList);
         this.history = new HistoryService();
@@ -291,6 +293,12 @@ class App {
     }
 
     async sync() {
+        if (this.syncing) {
+            return;
+        }
+
+        this.syncing = true;
+
         this.connectionState = "connecting";
         this.statusTitle.innerText = I18nService.t("status.connecting");
         this.statusUserName.innerText = "";
@@ -343,6 +351,8 @@ class App {
         }
         catch (ex) {
 
+            console.error("[sync]", ex);
+
             this.connectionState = "error";
             this.statusTitle.innerText = I18nService.t("status.error");
             this.statusUserName.innerText =
@@ -353,6 +363,10 @@ class App {
 
             this.statusCard.className =
                 "status-card error";
+
+        } finally {
+
+            this.syncing = false;
 
         }
     }
@@ -474,13 +488,11 @@ class App {
             clearInterval(this.syncInterval);
 
         }
-        const seconds = Number(this.pollInterval.value);
+        const seconds = Math.max(5, Number(this.pollInterval.value) || 60);
 
-        this.syncInterval=setInterval(()=>{
-
+        this.syncInterval = setInterval(() => {
             this.sync();
-
-        },seconds * 1000);
+        }, seconds * 1000);
 
     }
 
