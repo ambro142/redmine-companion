@@ -1,9 +1,5 @@
 const { ipcMain } = require("electron");
-
-const settings = require("../../storage/SettingsService");
-
-const RedmineClient = require("../../api/RedmineClient");
-
+const { createClient } = require("../clientFactory");
 const Logger = require("../../utils/Logger");
 
 function registerRedmineIpc() {
@@ -12,33 +8,18 @@ function registerRedmineIpc() {
 
         Logger.info("Testing connection");
 
-        const client = new RedmineClient(
-
-            settings.get("serverUrl"),
-
-            settings.get("apiKey")
-
-        );
-
-        return await client.getCurrentUser();
+        return await createClient().getCurrentUser();
 
     });
-    
+
     ipcMain.handle("redmine:info", async () => {
 
-       Logger.info("Loading Server info");
+        Logger.info("Loading Server info");
 
-       const client = new RedmineClient(
-
-           settings.get("serverUrl"),
-
-           settings.get("apiKey")
-
-       );
-
-       return await client.getServerInfo();
+        return await createClient().getServerInfo();
 
     });
+
 }
 
 module.exports = {

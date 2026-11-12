@@ -4,12 +4,57 @@ class JournalService {
 
         this.container = container;
         this.entries = [];
+        this.storageKey = null;
+
+    }
+
+    // Журнал хранится отдельно для каждого профиля и переживает перезапуск.
+    setStorageKey(key) {
+
+        this.storageKey = key;
+
+        try {
+
+            const data = JSON.parse(localStorage.getItem(key) || "[]");
+
+            this.entries = Array.isArray(data) ? data : [];
+
+        } catch (ex) {
+
+            this.entries = [];
+
+        }
+
+        this.render();
+
+    }
+
+    save() {
+
+        if (!this.storageKey)
+            return;
+
+        try {
+
+            localStorage.setItem(
+                this.storageKey,
+                JSON.stringify(this.entries)
+            );
+
+        } catch (ex) {
+            // не критично: журнал просто не сохранится
+        }
 
     }
 
     add(entry) {
 
         this.entries.unshift(entry);
+
+        // Храним последние 200 записей
+        this.entries = this.entries.slice(0, 200);
+
+        this.save();
 
         this.render();
 
@@ -18,6 +63,7 @@ class JournalService {
     clear() {
 
         this.entries = [];
+        this.save();
         this.render();
 
     }

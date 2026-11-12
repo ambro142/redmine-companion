@@ -1,22 +1,80 @@
-## Features
+# Redmine Companion
 
-- **Dashboard** — a summary of issues assigned to you, created by you, and watched by you.
-- **Auto-sync** with a configurable interval (30 sec – 10 min) and background operation from the tray.
-- **Notifications** for changes: new issue, status/assignee/priority/due date change, new comment.
-- **Event journal** — an in-app history of everything that changed.
-- **Quick actions** right from the issue card, no need to open a browser:
-  - change the issue status;
-  - reply with a comment.
-- **Search and sort** for the issue list (search by subject, project, ID; sort by last update, priority, due date, or ID).
-- **UI localization** — an RU / EN switch in the header; the chosen language persists between launches and is applied to the tray menu and system notifications as well.
-- Launch on Windows startup, launch minimized, minimize to tray.
+Десктопный помощник для Redmine (Windows, Linux, macOS): живёт в трее, следит за вашими задачами и показывает уведомления об изменениях.
+Desktop companion for Redmine: lives in the tray, watches your issues and notifies you about changes.
 
-Settings and the local issue history are stored at:
+## Возможности
+
+- **Задачи**: назначенные мне, созданные мной, наблюдаемые. Поиск, сортировка, фильтры по проекту, трекеру и статусу (выбор запоминается).
+- **Быстрые действия прямо в карточке**: статус, приоритет, срок, готовность, «взять себе», комментарий.
+- **Учёт времени**: списание часов (`1.5`, `1:30`, `1h30m`) с видом деятельности и таймером. Таймер переживает перезапуск.
+- **Уведомления** о новых задачах, комментариях, смене статуса, исполнителя, приоритета и срока. Клик по уведомлению открывает карточку задачи. Можно выбрать, о чём уведомлять, включить «Не беспокоить» (в том числе из меню трея) и тихие часы.
+- **Несколько серверов Redmine** (профили). У каждого свои адрес, ключ и история изменений.
+- **Журнал** событий (хранится между запусками), подсказка в трее с числом задач и ошибкой подключения.
+- **Сеть**: самоподписанные сертификаты (по явной настройке), прокси, понятные тексты ошибок (неверный ключ, сервер недоступен, таймаут...).
+- Светлая и тёмная тема, русский и английский языки.
+- API-ключ хранится зашифрованным средствами ОС (Electron `safeStorage`).
+- Автообновление из GitHub Releases (установщик / AppImage / dmg; portable-версия не обновляется).
+
+## Запуск из исходников
+
+```bash
+npm install
+npm start
+```
+
+Тесты: `npm test`.
+
+Нужен API-ключ Redmine: **Моя учётная запись → Ключ доступа API** (в администрировании должен быть включён REST API).
+
+## Сборка
+
+```bash
+npm run dist:win     # Windows (NSIS-установщик)
+npm run portable     # Windows portable
+npm run dist:linux   # AppImage и deb
+npm run dist:mac     # dmg и zip
+```
+
+Файлы появятся в папке `release/`.
+
+### Релиз через GitHub Actions
+
+```bash
+git tag v1.2.0
+git push --tags
+```
+
+Workflow `.github/workflows/release.yml` соберёт приложение под все три системы и приложит файлы к релизу.
+Автообновление берёт новые версии оттуда же. На macOS автообновление работает только для подписанных сборок.
+
+> После первой установки зависимостей закоммитьте `package-lock.json`.
+
+## Иконки
+
+Исходники иконок лежат в `src/assets/icons/*.svg`. В интерфейс они встраиваются через `src/renderer/icons.css`.
+Этот файл создаётся командой:
+
+```bash
+npm run icons
+```
+
+Запускайте её после добавления или изменения SVG. Использовать иконку: `Icon.html("person")` в JS или
+`<span class="ico ico-person"></span>` в HTML. Цвет иконки совпадает с цветом окружающего текста.
+Для меню трея нужны PNG (16 и 32 px) в `src/assets/tray`.
+
+## Структура
 
 ```
-%APPDATA%\Redmine Companion\settings.json
-%APPDATA%\Redmine Companion\history.json
+src/main        главный процесс: окно, трей, IPC
+src/api         клиент Redmine REST API
+src/storage     настройки (профили, шифрование ключа) и история
+src/services    системные уведомления
+src/renderer    интерфейс
+src/locales     переводы
+tests           модульные тесты (npm test)
 ```
-## License
+
+## Лицензия
 
 MIT

@@ -1343,7 +1343,7 @@ button{
    Иконки (assets/icons/*.svg)
    Иконка рисуется как маска и берёт цвет текста вокруг (currentColor).
    Использование: <span class="ico ico-person"></span>  или  Icon.html("person")
-   Префикс -webkit- нужен для Electron 22 (Chromium 108).
+   Сами картинки встроены в icons.css (создаётся командой npm run icons).
    ===================================================================== */
 
 .ico{
@@ -1368,23 +1368,6 @@ button{
     height:32px;
 }
 
-.ico-person{--ico:url("../assets/icons/person.svg");}
-.ico-edit{--ico:url("../assets/icons/edit.svg");}
-.ico-eye{--ico:url("../assets/icons/eye.svg");}
-.ico-book{--ico:url("../assets/icons/book.svg");}
-.ico-trash{--ico:url("../assets/icons/trash.svg");}
-.ico-calendar{--ico:url("../assets/icons/calendar.svg");}
-.ico-chat{--ico:url("../assets/icons/chat.svg");}
-.ico-add{--ico:url("../assets/icons/add.svg");}
-.ico-flag{--ico:url("../assets/icons/flag.svg");}
-.ico-sync{--ico:url("../assets/icons/sync.svg");}
-.ico-check{--ico:url("../assets/icons/check.svg");}
-.ico-warning{--ico:url("../assets/icons/warning.svg");}
-.ico-chevron-down{--ico:url("../assets/icons/chevron-down.svg");}
-.ico-folder{--ico:url("../assets/icons/folder.svg");}
-.ico-close{--ico:url("../assets/icons/close.svg");}
-.ico-settings{--ico:url("../assets/icons/settings.svg");}
-.ico-server{--ico:url("../assets/icons/server.svg");}
 
 /* Мелкие иконки в тексте */
 
@@ -1451,27 +1434,27 @@ button{
 }
 
 .status-title[data-state="connecting"]::before{
-    -webkit-mask-image:url("../assets/icons/sync.svg");
-    mask-image:url("../assets/icons/sync.svg");
+    -webkit-mask-image:var(--i-sync);
+    mask-image:var(--i-sync);
     background-color:var(--muted);
     animation:ico-spin 1s linear infinite;
 }
 
 .status-title[data-state="connected"]::before{
-    -webkit-mask-image:url("../assets/icons/check.svg");
-    mask-image:url("../assets/icons/check.svg");
+    -webkit-mask-image:var(--i-check);
+    mask-image:var(--i-check);
     background-color:var(--success);
 }
 
 .status-title[data-state="error"]::before{
-    -webkit-mask-image:url("../assets/icons/warning.svg");
-    mask-image:url("../assets/icons/warning.svg");
+    -webkit-mask-image:var(--i-warning);
+    mask-image:var(--i-warning);
     background-color:var(--danger);
 }
 
 .status-title[data-state="saved"]::before{
-    -webkit-mask-image:url("../assets/icons/check.svg");
-    mask-image:url("../assets/icons/check.svg");
+    -webkit-mask-image:var(--i-check);
+    mask-image:var(--i-check);
     background-color:var(--accent);
 }
 
@@ -1489,6 +1472,454 @@ button{
     margin-right:6px;
     vertical-align:-2px;
     background-color:currentColor;
-    -webkit-mask:url("../assets/icons/check.svg") center/contain no-repeat;
-    mask:url("../assets/icons/check.svg") center/contain no-repeat;
+    -webkit-mask:var(--i-check) center/contain no-repeat;
+    mask:var(--i-check) center/contain no-repeat;
+}
+
+/* =====================================================================
+   Новые элементы: карточка задачи, фильтры, профили, настройки уведомлений
+   ===================================================================== */
+
+:root{
+    color-scheme: light dark;
+    --field:#ffffff;
+}
+
+/* display:flex у блоков не должен перебивать атрибут hidden */
+[hidden]{
+    display:none !important;
+}
+
+.icon-button .ico{
+    width:20px;
+    height:20px;
+}
+
+.icon-button:disabled{
+    opacity:.35;
+    cursor:default;
+    transform:none;
+    background:transparent;
+}
+
+/* Приоритет - такой же выпадающий "тег", как и статус */
+
+.issue-priority-select{
+    border:none;
+    outline:none;
+    cursor:pointer;
+    font-family:inherit;
+}
+
+.issue-priority-select:disabled{
+    cursor:default;
+    opacity:.8;
+}
+
+/* Кнопки действий в карточке */
+
+.issue-actions{
+    display:flex;
+    flex-wrap:wrap;
+    gap:8px;
+}
+
+.issue-time-btn,
+.issue-edit-btn,
+.issue-take-btn{
+    background:transparent;
+    border:1px solid var(--border);
+    border-radius:10px;
+    padding:6px 14px;
+    font-size:13px;
+    color:#374151;
+    cursor:pointer;
+    transition:.2s;
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
+}
+
+.issue-time-btn:hover,
+.issue-edit-btn:hover,
+.issue-take-btn:hover{
+    background:#F3F4F6;
+}
+
+.issue-time-btn.running{
+    color:var(--danger);
+    border-color:var(--danger);
+}
+
+.issue-take-btn:disabled,
+.issue-reply-send:disabled,
+.issue-time-send:disabled,
+.issue-edit-save:disabled{
+    opacity:.6;
+    cursor:default;
+}
+
+/* Формы внутри карточки: время и правка полей */
+
+.issue-time-box,
+.issue-edit-box{
+    margin-top:10px;
+    display:flex;
+    flex-direction:column;
+    gap:8px;
+}
+
+.issue-box-row{
+    display:flex;
+    flex-wrap:wrap;
+    align-items:flex-end;
+    gap:8px;
+}
+
+.issue-time-hours{
+    width:150px;
+    max-width:150px;
+    height:34px;
+    margin-top:0;
+    border-radius:10px;
+    font-size:13px;
+    background:var(--field);
+}
+
+.issue-time-comment{
+    max-width:none;
+    height:34px;
+    margin-top:0;
+    border-radius:10px;
+    font-size:13px;
+    background:var(--field);
+}
+
+.issue-time-activity,
+.issue-edit-done,
+.issue-edit-due{
+    height:34px;
+    border:1px solid var(--border);
+    border-radius:10px;
+    padding:0 10px;
+    font-size:13px;
+    background:var(--field);
+    color:var(--text);
+    box-sizing:border-box;
+}
+
+.issue-edit-due{
+    width:auto;
+    max-width:none;
+    margin-top:0;
+}
+
+label.issue-field{
+    display:flex;
+    flex-direction:column;
+    gap:4px;
+    margin-top:0;
+    font-size:12px;
+    color:var(--muted);
+}
+
+.issue-timer-btn{
+    height:34px;
+    min-width:44px;
+    padding:0 12px;
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    gap:6px;
+    border:1px solid var(--border);
+    border-radius:10px;
+    background:transparent;
+    color:inherit;
+    font-size:13px;
+    cursor:pointer;
+    transition:.2s;
+}
+
+.issue-timer-btn:hover{
+    background:#F3F4F6;
+}
+
+.issue-timer-btn.running{
+    color:var(--danger);
+    border-color:var(--danger);
+}
+
+.issue-time-cancel,
+.issue-edit-cancel{
+    background:transparent;
+    border:1px solid var(--border);
+    border-radius:10px;
+    padding:0 14px;
+    height:34px;
+    font-size:13px;
+    color:inherit;
+    cursor:pointer;
+}
+
+.issue-time-cancel:hover,
+.issue-edit-cancel:hover{
+    background:#F3F4F6;
+}
+
+.issue-time-send,
+.issue-edit-save{
+    min-width:auto;
+    height:34px;
+    padding:0 16px;
+    font-size:13px;
+}
+
+/* Подсветка карточки после клика по уведомлению */
+
+.issue-card.flash{
+    animation:issue-flash 2.5s ease;
+}
+
+@keyframes issue-flash{
+    0%,60%{ box-shadow:0 0 0 3px rgba(37,99,235,.6); }
+    100%{ box-shadow:0 3px 10px rgba(15,23,42,.04); }
+}
+
+/* Фильтры списка задач */
+
+.issues-filters{
+    display:flex;
+    flex-wrap:wrap;
+    gap:12px;
+    margin:0 0 18px;
+}
+
+.issues-filters select{
+    max-width:220px;
+}
+
+.issues-reset-btn{
+    height:42px;
+    padding:0 16px;
+    border:1px solid var(--border);
+    border-radius:12px;
+    background:transparent;
+    color:inherit;
+    font-size:14px;
+    cursor:pointer;
+}
+
+.issues-reset-btn:hover{
+    background:rgba(127,127,127,.12);
+}
+
+/* Настройки */
+
+.profile-row{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    margin-top:6px;
+}
+
+.profile-row select{
+    flex:1;
+    max-width:480px;
+    height:42px;
+    border:1px solid var(--border);
+    border-radius:12px;
+    padding:0 14px;
+    background:rgb(207,207,207);
+    font-size:14px;
+}
+
+.settings-heading{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    font-size:16px;
+    font-weight:700;
+}
+
+.settings-quiet{
+    display:flex;
+    flex-wrap:wrap;
+    align-items:center;
+    gap:10px;
+    margin-top:15px;
+}
+
+.settings-quiet .settings-checkbox{
+    margin-top:0;
+}
+
+.settings-quiet input[type="time"]{
+    width:auto;
+    max-width:none;
+    height:34px;
+    margin-top:0;
+    border-radius:10px;
+}
+
+.settings-events{
+    display:grid;
+    grid-template-columns:repeat(auto-fill,minmax(220px,1fr));
+    column-gap:20px;
+}
+
+.settings-version{
+    display:flex;
+    gap:6px;
+    margin-top:18px;
+    font-size:12px;
+    color:var(--muted);
+}
+
+/* =====================================================================
+   Тёмная тема (следует за настройкой "Тема оформления" и системой)
+   ===================================================================== */
+
+@media (prefers-color-scheme: dark){
+
+    :root{
+        --bg:#0b1220;
+        --card:#162032;
+        --border:#2a3650;
+        --shadow:0 8px 24px rgba(0,0,0,.45);
+        --accent:#3b82f6;
+        --accent-hover:#60a5fa;
+        --text:#e5e7eb;
+        --muted:#94a3b8;
+        --field:#0f172a;
+    }
+
+    .dashboard-card,
+    .tabs,
+    .issue-card,
+    .journal-card,
+    .settings-panel{
+        background:var(--card);
+    }
+
+    .issue-card{
+        border-color:var(--border);
+    }
+
+    .issue-card:hover{
+        border-color:#3b4a6b;
+    }
+
+    .issues-section{
+        background:#111a2b;
+        border-color:var(--border);
+    }
+
+    input,
+    select,
+    textarea,
+    .issues-sort-select,
+    .profile-row select{
+        background:var(--field);
+        color:var(--text);
+        border-color:var(--border);
+    }
+
+    select option{
+        background:#162032;
+        color:#e5e7eb;
+    }
+
+    .status-tag{
+        background:#1e2a44;
+        color:#93c5fd;
+    }
+
+    .priority-tag{
+        background:#3a2a14;
+        color:#fbbf24;
+    }
+
+    .status-new{ background:rgba(34,197,94,.18); color:#86efac; }
+    .status-progress{ background:rgba(59,130,246,.2); color:#93c5fd; }
+    .status-solved{ background:rgba(245,158,11,.2); color:#fcd34d; }
+    .status-closed{ background:rgba(148,163,184,.18); color:#cbd5e1; }
+
+    .priority-low{ background:rgba(148,163,184,.18); color:#cbd5e1; }
+    .priority-normal{ background:rgba(14,165,233,.2); color:#7dd3fc; }
+    .priority-high{ background:rgba(239,68,68,.2); color:#fca5a5; }
+    .priority-urgent{ background:#dc2626; color:#fff; }
+
+    .status-card{
+        background:#0f172a;
+    }
+
+    .tab{
+        color:#94a3b8;
+    }
+
+    .tab:hover{
+        background:#1e2a44;
+        color:#93c5fd;
+    }
+
+    .tab.active{
+        color:#fff;
+    }
+
+    .issues-switch,
+    .header-lang{
+        background:#0f172a;
+    }
+
+    .switch-btn{
+        color:#cbd5e1;
+    }
+
+    .switch-btn:hover{
+        background:rgba(255,255,255,.08);
+    }
+
+    .switch-btn.active{
+        color:#fff;
+    }
+
+    .issue-reply-btn,
+    .issue-time-btn,
+    .issue-edit-btn,
+    .issue-take-btn{
+        color:#cbd5e1;
+    }
+
+    .issue-reply-btn:hover,
+    .issue-time-btn:hover,
+    .issue-edit-btn:hover,
+    .issue-take-btn:hover,
+    .issue-timer-btn:hover,
+    .issue-reply-cancel:hover,
+    .issue-time-cancel:hover,
+    .issue-edit-cancel:hover{
+        background:rgba(255,255,255,.08);
+    }
+
+    .icon-button:hover{
+        background:#243049;
+    }
+
+    .settings-row label,
+    .settings-panel label,
+    .issues-title,
+    .app-title{
+        color:var(--text);
+    }
+
+    .settings-divider{
+        border-top-color:#2a3650;
+    }
+
+    .dashboard-name,
+    .issue-project,
+    .issue-meta{
+        color:#94a3b8;
+    }
+
 }

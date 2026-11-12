@@ -24,7 +24,7 @@ class IssueSearchService {
 
     }
 
-    static sort(issues, sortKey){
+    static sort(issues, sortKey, priorities = []){
 
         const list = [...issues];
 
@@ -33,7 +33,8 @@ class IssueSearchService {
             case "priority_desc":
 
                 list.sort((a, b) =>
-                    (b.priority?.id || 0) - (a.priority?.id || 0)
+                    IssueMeta.priorityRank(b.priority, priorities) -
+                    IssueMeta.priorityRank(a.priority, priorities)
                 );
 
                 break;

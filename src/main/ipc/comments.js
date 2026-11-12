@@ -1,41 +1,36 @@
 const { ipcMain } = require("electron");
-const RedmineClient = require("../../api/RedmineClient");
-const settings = require("../../storage/SettingsService");
+const { createClient } = require("../clientFactory");
 
-function registerCommentsIpc(){
+function assertId(value) {
 
-    ipcMain.handle("issue:details", async (_, issueId)=>{
+    if (!Number.isInteger(value) || value <= 0)
+        throw new Error("Invalid issue id");
 
-        const client = new RedmineClient(
+}
 
-            settings.get("serverUrl"),
+function registerCommentsIpc() {
 
-            settings.get("apiKey")
+    ipcMain.handle("issue:details", async (_, issueId) => {
 
-        );
+        assertId(issueId);
 
-        return await client.getIssue(issueId);
+        return await createClient().getIssue(issueId);
 
     });
 
-    ipcMain.handle("issue:comment", async (_, issueId, notes)=>{
+    ipcMain.handle("issue:comment", async (_, issueId, notes) => {
 
-        const client = new RedmineClient(
+        assertId(issueId);
 
-            settings.get("serverUrl"),
+        if (typeof notes !== "string" || notes.trim() === "")
+            throw new Error("Empty comment");
 
-            settings.get("apiKey")
-
-        );
-
-        return await client.addIssueComment(issueId, notes);
+        return await createClient().addIssueComment(issueId, notes);
 
     });
 
 }
 
 module.exports = {
-
     registerCommentsIpc
-
 };

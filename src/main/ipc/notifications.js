@@ -1,30 +1,23 @@
 const { ipcMain } = require("electron");
 const NotificationService = require("../../services/NotificationService");
 
-function registerNotificationIpc(){
+function registerNotificationIpc() {
 
     ipcMain.handle(
-
         "notification:show",
+        (_, title, body, issueId) => {
 
-        (_,title,body)=>{
-
-            NotificationService.show(
-
-                title,
-
-                body
-
+            return NotificationService.show(
+                String(title || ""),
+                String(body || ""),
+                Number.isInteger(issueId) ? issueId : null
             );
 
         }
-
     );
 
 }
 
-module.exports={
-
+module.exports = {
     registerNotificationIpc
-
 };

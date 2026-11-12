@@ -1,36 +1,56 @@
 {
   "name": "redmine-companion",
   "productName": "Redmine Companion",
-  "version": "2.0",
+  "version": "1.2.0",
   "description": "Desktop companion for Redmine",
   "main": "src/main/main.js",
   "author": "ambro142",
   "license": "MIT",
   "homepage": "https://github.com/ambro142/redmine-companion",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ambro142/redmine-companion.git"
+  },
+  "bugs": {
+    "url": "https://github.com/ambro142/redmine-companion/issues"
+  },
   "scripts": {
     "start": "electron .",
+    "test": "node --test",
+    "icons": "node scripts/build-icons.js",
     "dist": "electron-builder",
-    "portable": "electron-builder --win portable"
+    "dist:win": "electron-builder --win",
+    "dist:linux": "electron-builder --linux",
+    "dist:mac": "electron-builder --mac",
+    "portable": "electron-builder --win portable --publish never"
   },
   "dependencies": {
     "axios": "^1.11.0",
     "dayjs": "^1.11.13",
-    "electron-store": "^8.2.0"
+    "electron-store": "^8.2.0",
+    "electron-updater": "^6.8.11"
   },
   "devDependencies": {
-    "electron": "22.3.27",
-    "electron-builder": "^24.13.3"
+    "electron": "^45.0.0",
+    "electron-builder": "^26.18.0"
   },
   "build": {
-    "appId": "com.redmine.notifier",
+    "appId": "com.redmine.companion",
     "productName": "Redmine Companion",
-    "artifactName": "${productName}-${version}.${ext}",
+    "artifactName": "${name}-${version}.${ext}",
     "directories": {
       "output": "release"
     },
     "files": [
       "src/**/*",
       "package.json"
+    ],
+    "publish": [
+      {
+        "provider": "github",
+        "owner": "ambro142",
+        "repo": "redmine-companion"
+      }
     ],
     "win": {
       "target": [
@@ -49,6 +69,23 @@
       "createDesktopShortcut": true,
       "createStartMenuShortcut": true,
       "shortcutName": "Redmine Companion"
+    },
+    "linux": {
+      "target": [
+        "AppImage",
+        "deb"
+      ],
+      "icon": "build/icon.png",
+      "category": "Network",
+      "maintainer": "ambro142 <ambro142@users.noreply.github.com>"
+    },
+    "mac": {
+      "target": [
+        "dmg",
+        "zip"
+      ],
+      "icon": "build/icon.png",
+      "category": "public.app-category.productivity"
     }
   }
 }

@@ -2,8 +2,11 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data:">
+    <meta name="color-scheme" content="light dark">
     <title>Redmine Companion</title>
     <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="icons.css">
 </head>
 
 <body>
@@ -179,6 +182,21 @@
             </select>
 
         </div>
+
+        <div class="issues-filters">
+
+            <select id="issuesProject" class="issues-sort-select"></select>
+
+            <select id="issuesTracker" class="issues-sort-select"></select>
+
+            <select id="issuesStatus" class="issues-sort-select"></select>
+
+            <button id="issuesReset" type="button" class="issues-reset-btn" data-i18n="issues.resetFilters">
+                Сбросить
+            </button>
+
+        </div>
+
         <div class="issues-section">
 
             <div class="issues-header" data-target="assignedList">
@@ -281,6 +299,28 @@
     <div id="settingsPage" class="page" hidden>
         <div class="settings-panel">
 
+            <label data-i18n="settings.profile">Профиль (сервер Redmine)</label>
+
+            <div class="profile-row">
+
+                <select id="profileSelect"></select>
+
+                <button id="profileNewBtn" type="button" class="icon-button"
+                        data-i18n-title="settings.profileNew" title="Новый профиль">
+                    <span class="ico ico-add" aria-hidden="true"></span>
+                </button>
+
+                <button id="profileRemoveBtn" type="button" class="icon-button"
+                        data-i18n-title="settings.profileRemove" title="Удалить профиль">
+                    <span class="ico ico-trash" aria-hidden="true"></span>
+                </button>
+
+            </div>
+
+            <label data-i18n="settings.profileName">Название профиля</label>
+
+            <input id="profileName" type="text" maxlength="60">
+
             <label data-i18n="settings.serverUrl">Адрес Redmine</label>
 
             <input
@@ -288,7 +328,7 @@
                     type="text"
                     placeholder="https://redmine.company.ru"
                     data-i18n-placeholder="settings.serverUrlPlaceholder">
-        
+
             <label data-i18n="settings.apiKey">API Key</label>
 
             <input
@@ -297,18 +337,33 @@
                     placeholder="Ваш API Key"
                     data-i18n-placeholder="settings.apiKeyPlaceholder">
 
+            <label class="settings-checkbox">
+                <input type="checkbox" id="allowSelfSigned">
+                <span data-i18n="settings.allowSelfSigned">Доверять самоподписанному сертификату</span>
+            </label>
+
+            <label for="proxyUrl" data-i18n="settings.proxy">Прокси (необязательно)</label>
+
+            <input
+                    id="proxyUrl"
+                    type="text"
+                    placeholder="http://host:3128"
+                    data-i18n-placeholder="settings.proxyPlaceholder">
+
             <div class="buttons">
 
-                <button id="saveBtn"class="primary-button" data-i18n="settings.save">
+                <button id="saveBtn" class="primary-button" data-i18n="settings.save">
                     Сохранить
                 </button>
 
-                <button id="testBtn"class="primary-button" data-i18n="settings.sync">
+                <button id="testBtn" class="primary-button" data-i18n="settings.sync">
                     Синхронизировать
                 </button>
-        
+
             </div>
+
             <div class="settings-divider"></div>
+
             <div class="settings-row">
                 <label for="pollInterval" data-i18n="settings.pollInterval">
                 Синхронизация
@@ -339,17 +394,105 @@
                 </select>
             </div>
 
+            <div class="settings-row">
+                <label for="maxIssues" data-i18n="settings.maxIssues">
+                Максимум задач в списке
+                </label>
+
+                <select id="maxIssues">
+                    <option value="200">200</option>
+                    <option value="500">500</option>
+                    <option value="1000">1000</option>
+                </select>
+            </div>
+
+            <div class="settings-row">
+                <label for="themeSelect" data-i18n="settings.theme">
+                Тема оформления
+                </label>
+
+                <select id="themeSelect">
+                    <option value="system" data-i18n="settings.themeSystem">Как в системе</option>
+                    <option value="light" data-i18n="settings.themeLight">Светлая</option>
+                    <option value="dark" data-i18n="settings.themeDark">Тёмная</option>
+                </select>
+            </div>
+
             <label class="settings-checkbox">
-                <input type="checkbox"id="startWithWindows">
+                <input type="checkbox" id="startWithWindows">
                 <span data-i18n="settings.startWithWindows">Запускать вместе с Windows</span>
             </label>
 
             <label class="settings-checkbox">
-                <input type="checkbox"id="startMinimized">
+                <input type="checkbox" id="startMinimized">
                 <span data-i18n="settings.startMinimized">Запускать свернутым</span>
             </label>
 
             <div class="settings-divider"></div>
+
+            <div class="settings-heading">
+                <span class="ico ico-bell-off" aria-hidden="true"></span>
+                <span data-i18n="settings.notifications">Уведомления</span>
+            </div>
+
+            <label class="settings-checkbox">
+                <input type="checkbox" id="dnd">
+                <span data-i18n="settings.dnd">Не беспокоить (без всплывающих окон)</span>
+            </label>
+
+            <div class="settings-quiet">
+
+                <label class="settings-checkbox">
+                    <input type="checkbox" id="quietEnabled">
+                    <span data-i18n="settings.quietHours">Тихие часы</span>
+                </label>
+
+                <span data-i18n="settings.quietFrom">с</span>
+                <input type="time" id="quietFrom">
+
+                <span data-i18n="settings.quietTo">до</span>
+                <input type="time" id="quietTo">
+
+            </div>
+
+            <label data-i18n="settings.events">О чём уведомлять</label>
+
+            <div class="settings-events">
+
+                <label class="settings-checkbox">
+                    <input type="checkbox" data-notify="new">
+                    <span data-i18n="settings.eventNew">Новые задачи</span>
+                </label>
+
+                <label class="settings-checkbox">
+                    <input type="checkbox" data-notify="comment">
+                    <span data-i18n="settings.eventComment">Комментарии</span>
+                </label>
+
+                <label class="settings-checkbox">
+                    <input type="checkbox" data-notify="status">
+                    <span data-i18n="settings.eventStatus">Смена статуса</span>
+                </label>
+
+                <label class="settings-checkbox">
+                    <input type="checkbox" data-notify="assigned">
+                    <span data-i18n="settings.eventAssigned">Смена исполнителя</span>
+                </label>
+
+                <label class="settings-checkbox">
+                    <input type="checkbox" data-notify="priority">
+                    <span data-i18n="settings.eventPriority">Смена приоритета</span>
+                </label>
+
+                <label class="settings-checkbox">
+                    <input type="checkbox" data-notify="due">
+                    <span data-i18n="settings.eventDue">Смена срока</span>
+                </label>
+
+            </div>
+
+            <div class="settings-divider"></div>
+
             <div id="statusCard" class="status-card">
 
                 <div class="status-avatar">
@@ -369,6 +512,11 @@
                     </div>
                 </div>
             </div>
+
+            <div class="settings-version">
+                <span data-i18n="settings.version">Версия</span>
+                <span id="appVersion"></span>
+            </div>
         </div>
     </div>  
 </div>
@@ -378,7 +526,12 @@
 <script src="services/I18nService.js"></script>
 <script src="services/HtmlUtils.js"></script>
 <script src="SyncService.js"></script>
+<script src="services/ErrorUtils.js"></script>
 <script src="services/Icon.js"></script>
+<script src="services/IssueMeta.js"></script>
+<script src="services/TimeUtils.js"></script>
+<script src="services/TimerService.js"></script>
+<script src="services/NotificationPolicy.js"></script>
 <script src="services/IssueRenderer.js"></script>
 <script src="services/JournalService.js"></script>
 <script src="services/CompareService.js"></script>

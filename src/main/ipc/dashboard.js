@@ -1,6 +1,5 @@
 const { ipcMain } = require("electron");
-const settings = require("../../storage/SettingsService");
-const RedmineClient = require("../../api/RedmineClient");
+const { createClient } = require("../clientFactory");
 const Logger = require("../../utils/Logger");
 
 function registerDashboardIpc() {
@@ -9,12 +8,7 @@ function registerDashboardIpc() {
 
         Logger.info("Loading dashboard");
 
-        const client = new RedmineClient(
-            settings.get("serverUrl"),
-            settings.get("apiKey")
-        );
-
-        return await client.getDashboard();
+        return await createClient().getDashboard();
 
     });
 
