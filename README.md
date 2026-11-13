@@ -38,43 +38,6 @@ npm run dist:mac     # dmg и zip
 
 Файлы появятся в папке `release/`.
 
-### Релиз через GitHub Actions
-
-```bash
-git tag v1.2.0
-git push --tags
-```
-
-Workflow `.github/workflows/release.yml` соберёт приложение под все три системы и приложит файлы к релизу.
-Автообновление берёт новые версии оттуда же. На macOS автообновление работает только для подписанных сборок.
-
-> После первой установки зависимостей закоммитьте `package-lock.json`.
-
-## Иконки
-
-Исходники иконок лежат в `src/assets/icons/*.svg`. В интерфейс они встраиваются через `src/renderer/icons.css`.
-Этот файл создаётся командой:
-
-```bash
-npm run icons
-```
-
-Запускайте её после добавления или изменения SVG. Использовать иконку: `Icon.html("person")` в JS или
-`<span class="ico ico-person"></span>` в HTML. Цвет иконки совпадает с цветом окружающего текста.
-Для меню трея нужны PNG (16 и 32 px) в `src/assets/tray`.
-
-## Структура
-
-```
-src/main        главный процесс: окно, трей, IPC
-src/api         клиент Redmine REST API
-src/storage     настройки (профили, шифрование ключа) и история
-src/services    системные уведомления
-src/renderer    интерфейс
-src/locales     переводы
-tests           модульные тесты (npm test)
-```
-
 ## Лицензия
 
 MIT
